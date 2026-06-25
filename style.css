@@ -1,54 +1,111 @@
-/* style.css */
+/* ==========================================
+   💎 RIMBERIO ELITE STYLESHEET (PRO MAX)
+   ========================================== */
+
+/* 🎨 BRAND COLOR VAULT */
+:root {
+    --elite-dark: #0F0F10;
+    --elite-light: #FAF6F0;
+    --elite-accent: #EA580C;
+}
+
+/* 🏗️ INTERFERENCE PROTECTION PROTOCOL */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html { 
+    scroll-behavior: smooth; 
+}
 
 body { 
     font-family: 'Geist', sans-serif; 
-    background-color: #FAF6F0; 
-    color: #0F0F10; 
+    background-color: var(--elite-light); 
+    color: var(--elite-dark); 
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
 }
 
-.heading-elite { 
-    font-family: 'Syne', sans-serif; 
-    font-weight: 800; 
-    letter-spacing: -0.04em; 
+/* Premium Text Selection Color */
+::selection { 
+    background-color: var(--elite-accent); 
+    color: var(--elite-light); 
 }
+
+/* 🖱️ SLEEK INVISIBLE SCROLLBAR */
+::-webkit-scrollbar { 
+    width: 6px; 
+    height: 6px;
+}
+::-webkit-scrollbar-track { 
+    background: transparent; 
+}
+::-webkit-scrollbar-thumb { 
+    background: rgba(15, 15, 16, 0.15); 
+    border-radius: 10px; 
+}
+::-webkit-scrollbar-thumb:hover { 
+    background: var(--elite-accent); 
+}
+
+/* ------------------------------------------
+   ✨ LAYER HIERARCHY SHIELD (Fixes the Bug)
+   ------------------------------------------ */
+header {
+    z-index: 100 !important; /* Header rules over everything */
+}
+
+/* ------------------------------------------
+   🏎️ HARDWARE ACCELERATED ANIMATIONS (60 FPS)
+   ------------------------------------------ */
 
 /* 🔥 GLOWING EFFECT FOR OFF BADGE */
 .glowing-badge {
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
     border-color: rgba(239, 68, 68, 0.5);
-    animation: badgePulse 2s infinite;
+    animation: badgePulse 2.5s infinite ease-in-out;
+    will-change: box-shadow;
 }
 @keyframes badgePulse {
-    0% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); border-color: rgba(239, 68, 68, 0.5); }
+    0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); border-color: rgba(239, 68, 68, 0.5); }
     50% { box-shadow: 0 0 18px rgba(239, 68, 68, 1); border-color: rgba(239, 68, 68, 0.8); }
-    100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); border-color: rgba(239, 68, 68, 0.5); }
 }
 
 /* ✨ ELITE SOFT GOLD/AMBER GLOW FOR TRUST BADGE BOXES */
 .glowing-trust-box {
-    animation: trustGlow 2.5s infinite ease-in-out;
+    animation: trustGlow 3s infinite ease-in-out;
+    will-change: box-shadow, border-color;
 }
 @keyframes trustGlow {
-    0% { box-shadow: 0 0 5px rgba(234, 88, 12, 0.15); border-color: rgba(234, 88, 12, 0.15); }
+    0%, 100% { box-shadow: 0 0 5px rgba(234, 88, 12, 0.15); border-color: rgba(234, 88, 12, 0.15); }
     50% { box-shadow: 0 0 15px rgba(234, 88, 12, 0.4); border-color: rgba(234, 88, 12, 0.4); }
-    100% { box-shadow: 0 0 5px rgba(234, 88, 12, 0.15); border-color: rgba(234, 88, 12, 0.15); }
 }
 
 /* 🌐 PREMIUM AMBIENT GLOW ANIMATION FOR NAVBAR */
 .glowing-navbar {
     animation: navbarAmbientGlow 4s infinite ease-in-out;
+    will-change: box-shadow;
 }
 @keyframes navbarAmbientGlow {
-    0% { box-shadow: 0 4px 20px rgba(15, 15, 16, 0.03), 0 0 10px rgba(234, 88, 12, 0.05); border-color: rgba(15, 15, 16, 0.1); }
-    50% { box-shadow: 0 10px 30px rgba(15, 15, 16, 0.06), 0 0 20px rgba(234, 88, 12, 0.15); border-color: rgba(234, 88, 12, 0.2); }
-    100% { box-shadow: 0 4px 20px rgba(15, 15, 16, 0.03), 0 0 10px rgba(234, 88, 12, 0.05); border-color: rgba(15, 15, 16, 0.1); }
+    0%, 100% { box-shadow: 0 4px 20px rgba(15, 15, 16, 0.03), 0 0 10px rgba(234, 88, 12, 0.05); }
+    50% { box-shadow: 0 10px 30px rgba(15, 15, 16, 0.06), 0 0 20px rgba(234, 88, 12, 0.15); }
 }
 
 /* 🏃‍♂️ ANIMATED SCROLLING MARQUEE */
+.animate-marquee { 
+    animation: marquee 20s linear infinite; 
+    will-change: transform;
+}
 @keyframes marquee {
     0% { transform: translateX(0%); }
     100% { transform: translateX(-50%); }
 }
-.animate-marquee { 
-    animation: marquee 20s linear infinite; 
+
+/* Elite Typography Font Definition mapping tracking layout stability */
+.heading-elite { 
+    font-family: 'Syne', sans-serif; 
+    font-weight: 800; 
+    letter-spacing: -0.04em; 
 }
