@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rimberio — Elite Luxury Marketplace</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght=400;500;700&family=Syne:wght=800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('storeCore', () => ({
+                scrolled: false, cartOpen: false, detailOpen: false,
+                products: [], // Automatically fetched and rendered via python scan route
+                tickerItems: ['FREE EXPRESS SHIPPING OVER RS 5,000', 'NEW DROP EVERY 48 HOURS', '30-DAY EASY RETURNS', 'CASH ON DELIVERY AVAILABLE'],
+                
+                selectedProduct: { name: '', price: 0, tag: '', img1: '', img2: '', img3: '', id: '', compareAt: 0 }, 
+                activeDetailImg: '',
+                cart: [],
+                
+                customerName: '', customerEmail: '', customerPhone: '', customerAddress: '',
+                paymentMethod: 'COD', 
+                orderLoading: false,
+                
+                async init() {
+                    window.addEventListener('scroll', () => { this.scrolled = window.scrollY > 20; });
+                    try {
+                        // Requesting local python engine port architecture layout
+                        const response = await fetch('http://127.0.0.1:5000/api/products');
+                        const result = await response.json();
+                        if (result.success && result.products) {
+                            this.products = result.products.map(p => ({ ...p, currentPreview: p.img1 }));
+                        }
+                    } catch (error) {
+                        console.log("Python network pipeline currently scanning local assets.");
+                    }
+                },
+                
+                get cartCount() { return this.cart.reduce((sum, item) => sum + item.qty, 0); },
+                get cartSubtotal() { return this.cart.reduce((sum, item) => sum + (item.price * item.qty), 0); },
+                get deliveryCharges() { return this.cartCount === 0 ? 0 : 399; },
+                get cartTotal() { return this.cartSubtotal + this.deliveryCharges; },
+                
+                openQuickView(product) {
+                    this.selectedProduct = product; 
+                    this.activeDetailImg = product.img1;
+                    this.detailOpen = true;
+                },
+                addToCart(product) {
+                    let found = this.cart.find(item => item.id === product.id);
+                    if (found) { found.qty++; } else { this.cart.push({ ...product, qty: 1 }); }
+                },
+                incrementQty(item) { item.qty++; },
+                decrementQty(item) {
+                    if (item.qty > 1) { item.qty--; } else { this.removeFromCart(item.id); }
+                },
+                removeFromCart(productId) {
+                    this.cart = this.cart.filter(item => item.id !== productId);
+                },
+                
+                async submitOrder() {
+                    if (this.cart.length === 0) { alert('Your shopping bag is currently empty!'); return; }
+                    if (!this.customerName || !this.customerPhone || !this.customerAddress) { alert('Please fill in all dispatch and shipping details!'); return; }
+                    
+                    this.orderLoading = true;
+                    const orderPayload = {
+                        customer: { name: this.customerName, email: this.customerEmail, phone: this.customerPhone, shippingAddress: this.customerAddress },
+                        cart: this.cart.map(item => ({ id: item.id, name: item.name, price: item.price, qty: item.qty })),
+                        paymentMethod: this.paymentMethod
+                    };
+
+                    try {
+                        const response = await fetch('http://127.0.0.1:5000/api/checkout', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderPayload)
+                        });
+                        const result = await response.json();
+                        if (response.ok && result.success) {
+                            alert('🎉 ORDER PLACED SUCCESSFULLY!');
+                            this.cart = []; this.customerName = ''; this.customerEmail = ''; this.customerPhone = ''; this.customerAddress = ''; this.cartOpen = false;
+                        } else {
+                            alert('⚠️ Order processing failed on the server.');
+                        }
+                    } catch (error) {
+                        alert('❌ Error connecting to the local server transmission channel.');
+                    } finally {
+                        this.orderLoading = false;
+                    }
+                }
+            }));
+        });
+    </script>
+</head>
+<body class="overflow-x-hidden antialiased bg-[#FAF6F0] text-[#0F0F10]">
+
+    <div x-data="storeCore()">
+        
+        <div class="w-screen overflow-hidden bg-[#0F0F10] text-[#FAF6F0] py-2.5 border-b border-white/5 font-mono text-[9px] font-bold tracking-widest relative z-50">
+            <div class="flex whitespace-nowrap animate-marquee gap-12 justify-around">
+                <template x-for="ticker in tickerItems"><span class="inline-block" x-text="'// ' + ticker"></span></template>
+                <template x-for="ticker in tickerItems"><span class="inline-block" x-text="'// ' + ticker"></span></template>
+            </div>
+        </div>
+
+        <header class="fixed inset-x-0 top-8 z-40 transition-all duration-500" :class="scrolled ? 'px-4 py-2' : 'px-6 py-4'">
+            <div class="mx-auto flex max-w-7xl items-center justify-between border px-8 py-4 bg-[#FAF6F0]/80 backdrop-blur-xl rounded-2xl glowing-navbar transition-all duration-500">
+                <div class="flex items-center gap-2 cursor-pointer group" onclick="window.location.reload()">
+                    <div class="bg-[#0F0F10] text-[#FAF6F0] heading-elite text-xs px-2.5 py-1.5 rounded-lg font-black">R.</div>
+                    <span class="heading-elite text-xl uppercase tracking-tighter text-[#0F0F10] font-black">RIMBERIO</span>
+                </div>
+                <nav class="hidden md:flex items-center gap-10">
+                    <a href="#trending" class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#0F0F10]/60 hover:text-[#EA580C] transition-colors">LIVE DROPS</a>
+                    <a href="#faqs" class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#0F0F10]/60 hover:text-[#EA580C] transition-colors">FAQS</a>
+                    <a href="#support" class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#0F0F10]/60 hover:text-[#EA580C] transition-colors">SUPPORT</a>
+                </nav>
+                <div class="flex items-center gap-2">
+                    <button @click="cartOpen = true" class="relative grid size-10 place-items-center rounded-full text-[#0F0F10]/80 hover:bg-[#0F0F10]/5 transition-all border border-[#0F0F10]/5 bg-white/40 shadow-xs">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        <span x-show="cartCount > 0" class="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-[#EA580C] font-mono text-[9px] text-white font-bold shadow-md transition-all animate-bounce" x-text="cartCount"></span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <section class="relative min-h-screen flex flex-col justify-center px-6 pb-16 pt-36 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                <div class="lg:col-span-7">
+                    <div class="mb-5"><span class="inline-flex items-center rounded-full bg-[#059669]/10 border border-[#059669]/20 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-[#059669] font-bold">NEW ARRIVALS // 2026</span></div>
+                    <h1 class="heading-elite text-4xl sm:text-5xl md:text-6xl leading-[1.1] uppercase mb-6 text-[#0F0F10] tracking-tight">
+                        STOP SEARCHING. <br>
+                        <span class="text-[#EA580C] block sm:inline-block">START RIMBERIOING.</span>
+                    </h1>
+                    <p class="max-w-lg text-[#0F0F10]/60 text-sm font-medium leading-relaxed mb-10">No endless scrolling. Just hyper-curated premium lifestyle gadgets and aesthetics engineered to elevate your everyday ecosystem.</p>
+                    <div>
+                        <button @click="document.getElementById('trending').scrollIntoView({ behavior: 'smooth' })" class="bg-[#0F0F10] text-white font-bold px-8 py-4 rounded-xl text-xs tracking-widest uppercase hover:bg-[#EA580C] transition-all duration-300 shadow-md">EXPLORE PRODUCTS ↗</button>
+                    </div>
+                </div>
+                <div class="lg:col-span-5">
+                    <template x-if="products.length > 0">
+                        <div @click="openQuickView(products[0])" class="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-[#0F0F10]/5 border border-[#0F0F10]/10 p-3 shadow-xs group cursor-pointer transition-all hover:shadow-2xl">
+                            <div class="w-full h-full overflow-hidden rounded-[2rem] bg-white relative">
+                                <img :src="products[0].img1" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-95" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
+                                <span class="absolute left-6 top-6 rounded-full bg-red-600/10 glowing-badge text-red-600 font-mono text-[9px] uppercase tracking-widest font-bold px-3 py-1 z-20">33% OFF</span>
+                            </div>
+                            <div class="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl bg-[#FAF6F0]/95 border border-[#0F0F10]/10 px-6 py-4.5 shadow-sm">
+                                <div><span class="font-mono text-[9px] font-bold uppercase tracking-widest text-[#EAB308]">HOT DROP 🔥</span><div class="heading-elite text-sm text-[#0F0F10] mt-0.5" x-text="products[0].name"></div></div>
+                                <div class="heading-elite text-base text-[#EA580C]" x-text="'Rs ' + products[0].price.toLocaleString()"></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </section>
+
+        <section id="trending" class="px-6 py-28 max-w-7xl mx-auto border-t border-[#0F0F10]/10">
+            <div class="mb-16"><h2 class="heading-elite text-3xl sm:text-4xl uppercase tracking-tight text-[#0F0F10]">LIVE CATALOG</h2></div>
+            <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-2">
+                <template x-for="product in products" :key="product.id">
+                    <div class="group bg-white border border-[#0F0F10]/5 p-6 rounded-[2rem] shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                        <div class="relative aspect-square overflow-hidden rounded-[1.8rem] bg-[#0F0F10]/5 p-3 cursor-pointer" @click="openQuickView(product)">
+                            <div class="w-full h-full overflow-hidden rounded-[1.5rem] bg-white relative">
+                                <img :src="product.currentPreview" class="w-full h-full object-cover rounded-[1.5rem] transition-transform duration-700 ease-out group-hover:scale-110" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
+                                <div class="absolute inset-0 z-20 flex">
+                                    <div class="h-full w-1/2" @mouseenter="product.currentPreview = product.img1"></div>
+                                    <div class="h-full w-1/2" @mouseenter="product.currentPreview = product.img2 || product.img1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <span class="font-mono text-[9px] uppercase tracking-widest font-bold text-[#059669] bg-[#059669]/10 border border-[#059669]/20 px-2.5 py-0.5 rounded-md" x-text="product.tag"></span>
+                            <h3 class="font-bold text-[#0F0F10] mt-3 text-lg sm:text-xl tracking-tight" x-text="product.name"></h3>
+                            <div class="mt-4 flex items-center justify-between border-t border-[#0F0F10]/5 pt-4">
+                                <span class="heading-elite text-xl text-[#0F0F10]" x-text="'Rs ' + product.price.toLocaleString()"></span>
+                                <button @click="addToCart(product)" class="bg-[#EA580C] text-white font-bold px-6 py-3 rounded-xl text-xs uppercase tracking-wider hover:bg-[#0F0F10] transition-colors duration-300">ADD TO BAG +</button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </section>
+
+        <div x-show="detailOpen" class="fixed inset-0 z-50 bg-[#0F0F10]/40 backdrop-blur-md flex items-center justify-center p-4" style="display: none;" x-transition>
+            <div @click.away="detailOpen = false" class="bg-white border border-[#0F0F10]/10 rounded-[2.5rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 md:p-10 relative shadow-2xl">
+                <button @click="detailOpen = false" class="absolute right-6 top-6 grid w-10 h-10 place-items-center rounded-full bg-[#FAF6F0] text-[#0F0F10]/60 hover:text-black font-bold z-10 border border-[#0F0F10]/10 hover:bg-[#0F0F10] hover:text-white transition-all">✕</button>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
+                    <div class="md:col-span-6 space-y-4">
+                        <div class="aspect-square bg-[#FAF6F0] rounded-2xl overflow-hidden border border-[#0F0F10]/5 p-2 relative shadow-inner">
+                            <img :src="activeDetailImg" class="w-full h-full object-cover rounded-xl transition-all" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
+                        </div>
+                        <div class="flex gap-2.5 overflow-x-auto pb-1">
+                            <template x-if="selectedProduct.img1">
+                                <button @click="activeDetailImg = selectedProduct.img1" class="w-16 h-16 rounded-xl overflow-hidden border bg-white p-1 flex-shrink-0 transition-all" :class="activeDetailImg === selectedProduct.img1 ? 'border-[#EA580C] ring-1 ring-[#EA580C]' : 'border-[#0F0F10]/10'"><img :src="selectedProduct.img1" class="w-full h-full object-cover rounded-lg"></button>
+                            </template>
+                            <template x-if="selectedProduct.img2">
+                                <button @click="activeDetailImg = selectedProduct.img2" class="w-16 h-16 rounded-xl overflow-hidden border bg-white p-1 flex-shrink-0 transition-all" :class="activeDetailImg === selectedProduct.img2 ? 'border-[#EA580C] ring-1 ring-[#EA580C]' : 'border-[#0F0F10]/10'"><img :src="selectedProduct.img2" class="w-full h-full object-cover rounded-lg"></button>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="md:col-span-6 flex flex-col h-full justify-between space-y-6">
+                        <div>
+                            <span class="font-mono text-[9px] uppercase tracking-widest font-bold text-[#059669] bg-[#059669]/10 border border-[#059669]/20 px-2.5 py-0.5 rounded-md" x-text="selectedProduct.tag"></span>
+                            <h2 class="heading-elite text-2xl sm:text-3xl uppercase tracking-tight text-[#0F0F10] mt-3 mb-4 leading-tight" x-text="selectedProduct.name"></h2>
+                            <div class="flex items-baseline gap-3 mb-6">
+                                <span class="heading-elite text-2xl text-[#EA580C]" x-text="'Rs ' + (selectedProduct.price || 0).toLocaleString()"></span>
+                            </div>
+                        </div>
+                        <button @click="addToCart(selectedProduct); detailOpen = false;" class="w-full bg-[#EA580C] text-white font-bold py-4 rounded-xl text-xs tracking-widest uppercase hover:bg-[#0F0F10] transition-colors shadow-md">ADD TO CART & CHECKOUT ↗</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section id="faqs" class="px-6 py-24 max-w-4xl mx-auto border-t border-[#0F0F10]/10" x-data="{ activeFaq: null }">
+            <div class="text-center mb-16">
+                <p class="font-mono text-[10px] uppercase tracking-widest font-bold text-[#EA580C]">/ INSTANT ACCELERATION</p>
+                <h2 class="heading-elite text-3xl uppercase mt-2">Frequently Asked Questions</h2>
+            </div>
+            <div class="space-y-4">
+                <div class="border border-[#0F0F10]/10 bg-white rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-md">
+                    <button @click="activeFaq = (activeFaq === 1 ? null : 1)" class="w-full flex justify-between items-center px-6 py-5 font-bold text-left text-[#0F0F10] hover:bg-[#FAF6F0]/50">
+                        <span>What is the standard delivery timeline?</span>
+                        <span class="text-lg transition-transform" :class="activeFaq === 1 ? 'rotate-45 text-[#EA580C]' : ''">+</span>
+                    </button>
+                    <div x-show="activeFaq === 1" x-collapse class="px-6 text-sm text-[#0F0F10]/60 font-medium border-t border-[#0F0F10]/5">
+                        <div class="py-5">We dispatch all premium design objects from our main distribution center. Shipping takes 7 to 10 days, but your order can arrive even faster!</div>
+                    </div>
+                </div>
+                <div class="border border-[#0F0F10]/10 bg-white rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-md">
+                    <button @click="activeFaq = (activeFaq === 2 ? null : 2)" class="w-full flex justify-between items-center px-6 py-5 font-bold text-left text-[#0F0F10] hover:bg-[#FAF6F0]/50">
+                        <span>Do you support Secure Cash on Delivery (COD)?</span>
+                        <span class="text-lg transition-transform" :class="activeFaq === 2 ? 'rotate-45 text-[#EA580C]' : ''">+</span>
+                    </button>
+                    <div x-show="activeFaq === 2" x-collapse class="px-6 text-sm text-[#0F0F10]/60 font-medium border-t border-[#0F0F10]/5">
+                        <div class="py-5">Yes, absolutely! Nationwide Cash on Delivery is active with an identical flat rate of Rs 399 calculated at the processing ledger.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="support" class="px-6 py-24 max-w-5xl mx-auto border-t border-[#0F0F10]/10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center bg-white border border-[#0F0F10]/10 p-8 md:p-12 rounded-[2.5rem] shadow-sm">
+                <div>
+                    <p class="font-mono text-[10px] uppercase tracking-widest font-bold text-[#059669]">/ CORE LINK LINE</p>
+                    <h2 class="heading-elite text-3xl uppercase mt-2 mb-4 text-[#0F0F10]">Elite Customer Concierge</h2>
+                    <div class="space-y-3 font-mono text-xs font-bold text-[#0F0F10]/80">
+                        <div class="flex items-center gap-2"><span>💬 WHATSAPP ENGINE:</span><span class="text-[#EA580C]">+92 300 0000000</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div x-show="cartOpen" class="fixed inset-0 z-50 bg-[#0F0F10]/40 backdrop-blur-sm" style="display: none;" x-transition>
+            <div @click.away="cartOpen = false" class="absolute right-0 top-0 h-full w-full max-w-md bg-white border-l border-[#0F0F10]/10 flex flex-col shadow-2xl">
+                
+                <div class="flex justify-between items-center p-6 border-b border-[#0F0F10]/5 shrink-0 bg-white">
+                    <h3 class="heading-elite text-lg uppercase tracking-wider text-[#0F0F10]">YOUR BAG (<span x-text="cartCount"></span>)</h3>
+                    <button @click="cartOpen = false" class="text-[#0F0F10]/40 hover:text-black font-bold text-xl">✕</button>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto p-6 scroll-smooth">
+                    <div class="space-y-3 mb-8">
+                        <template x-for="item in cart" :key="item.id">
+                            <div class="flex gap-4 bg-[#FAF6F0]/50 border border-[#0F0F10]/5 p-3 rounded-2xl items-center shadow-sm relative group">
+                                <img :src="item.img1" class="w-14 h-14 rounded-xl object-cover border border-[#0F0F10]/5" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-sm text-[#0F0F10] leading-tight" x-text="item.name"></h5>
+                                    <span class="text-xs font-black text-[#EA580C] mt-1 block" x-text="'Rs ' + item.price.toLocaleString()"></span>
+                                </div>
+                                <div class="flex items-center bg-white border border-[#0F0F10]/10 rounded-xl px-1.5 py-1 gap-2.5 shadow-2xs shrink-0 select-none">
+                                    <button @click="decrementQty(item)" class="text-xs font-black text-[#0F0F10]/50 hover:text-black size-5 flex items-center justify-center transition-colors rounded-md hover:bg-[#FAF6F0]">-</button>
+                                    <span class="text-xs font-mono font-bold text-[#0F0F10] w-3 text-center" x-text="item.qty"></span>
+                                    <button @click="incrementQty(item)" class="text-xs font-black text-[#0F0F10]/50 hover:text-black size-5 flex items-center justify-center transition-colors rounded-md hover:bg-[#FAF6F0]">+</button>
+                                </div>
+                                <button @click="removeFromCart(item.id)" class="text-[#0F0F10]/20 hover:text-red-600 font-bold text-xs p-1 transition-colors shrink-0">✕</button>
+                            </div>
+                        </template>
+                        <template x-if="cart.length === 0">
+                            <div class="text-center py-10 opacity-50">
+                                <span class="text-4xl block mb-2">🛒</span>
+                                <p class="text-xs font-bold text-[#0F0F10] uppercase tracking-wider">Your bag is empty</p>
+                            </div>
+                        </template>
+                    </div>
+
+                    <form @submit.prevent="submitOrder()" class="space-y-5">
+                        <div>
+                            <h4 class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#EA580C] pb-2 border-b border-[#0F0F10]/5 mb-3">/ DISPATCH DISPOSITION</h4>
+                            <div class="space-y-3">
+                                <input type="text" x-model="customerName" placeholder="Full Name" required class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black">
+                                <input type="tel" x-model="customerPhone" placeholder="Phone (WhatsApp Terminal)" required class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black">
+                                <input type="text" x-model="customerAddress" placeholder="Complete Shipping Address" required class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="font-mono text-[9px] font-bold text-[#0F0F10]/50 uppercase tracking-wider block mb-2">Payment System Matrix</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div @click="paymentMethod = 'COD'" class="cursor-pointer border p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all" :class="paymentMethod === 'COD' ? 'border-[#EA580C] bg-[#EA580C]/5 ring-1 ring-[#EA580C]' : 'border-[#0F0F10]/10 bg-[#FAF6F0]'">
+                                    <span class="text-2xl">💵</span>
+                                    <span class="text-[10px] font-black text-[#0F0F10] uppercase tracking-wider text-center">Cash on Delivery</span>
+                                </div>
+                                <div @click="paymentMethod = 'CARD'" class="cursor-pointer border p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all" :class="paymentMethod === 'CARD' ? 'border-[#0F0F10] bg-[#0F0F10] ring-1 ring-[#0F0F10] text-white' : 'border-[#0F0F10]/10 bg-[#FAF6F0] text-[#0F0F10]'">
+                                    <span class="text-2xl">💳</span>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-center" :class="paymentMethod === 'CARD' ? 'text-white' : 'text-[#0F0F10]'">Credit / Debit</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div x-show="paymentMethod === 'CARD'" x-collapse class="pt-2">
+                            <div class="p-5 rounded-2xl border border-[#0F0F10]/10 bg-white space-y-4 shadow-xl relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-[#EA580C]"></div>
+                                <p class="font-mono text-[9px] font-black text-[#EA580C] uppercase tracking-wider">Secure Payment Gateway</p>
+                                <input type="text" placeholder="Card Number" class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black text-center tracking-[0.2em]">
+                            </div>
+                        </div>
+                        <div class="bg-[#FAF6F0] border border-[#0F0F10]/10 rounded-2xl p-5 mt-2 space-y-2.5 text-xs font-medium shadow-sm">
+                            <div class="flex justify-between text-[#0F0F10]/60"><span>Subtotal:</span><span class="font-bold text-[#0F0F10]" x-text="'Rs ' + cartSubtotal.toLocaleString()"></span></div>
+                            <div class="flex justify-between text-[#0F0F10]/60"><span>Delivery Charges:</span><span class="font-bold text-[#0F0F10]" x-text="'Rs ' + deliveryCharges"></span></div>
+                            <div class="flex justify-between items-center border-t border-[#0F0F10]/10 pt-3 mt-1 text-[#0F0F10]">
+                                <span class="font-bold uppercase tracking-wider text-[10px]">Total Bill Amount:</span>
+                                <span class="heading-elite text-lg text-[#EA580C]" x-text="'Rs ' + cartTotal.toLocaleString()"></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="p-6 border-t border-[#0F0F10]/5 bg-white shrink-0 z-10">
+                    <button @click="submitOrder()" :disabled="orderLoading" class="w-full bg-[#0F0F10] text-white font-black py-5 rounded-2xl text-sm tracking-[0.15em] uppercase hover:bg-[#EA580C] transition-all duration-300 flex justify-center items-center gap-2 shadow-lg">
+                        <span x-show="orderLoading">TRANSMITTING... ⏳</span>
+                        <span x-show="!orderLoading">PLACE ORDER 🚀</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="border-t border-[#0F0F10]/5 bg-white mt-12 px-6">
+            <div class="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4 py-8 text-[10px] font-mono font-bold text-[#0F0F10]/40">
+                <p>© 2026 RIMBERIO LABS · DISTRIBUTION PLATFORM LAYER</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

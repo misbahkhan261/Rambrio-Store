@@ -1,0 +1,66 @@
+@charset "UTF-8";
+
+/* ============================================================================
+   RIMBERIO — High-End Aesthetic Configuration Layer (style.css)
+   ============================================================================ */
+
+:root {
+    --font-geist: 'Geist', sans-serif;
+    --font-syne: 'Syne', sans-serif;
+}
+
+body {
+    font-family: var(--font-geist);
+}
+
+.heading-elite {
+    font-family: var(--font-syne);
+    font-weight: 800;
+}
+
+/* 🏎️ Smooth Custom Marquee Animation Matrix */
+@keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+    animation-play-state: paused;
+}
+
+/* 💎 Premium Glowing Effects & Components */
+.glowing-navbar {
+    box-shadow: 0 4px 30px rgba(15, 15, 16, 0.03), 
+                inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(15, 15, 16, 0.05);
+}
+
+.glowing-trust-box {
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glowing-trust-box:hover {
+    border-color: rgba(234, 88, 12, 0.3);
+    background-color: rgba(234, 88, 12, 0.02);
+    box-shadow: 0 10px 25px -10px rgba(234, 88, 12, 0.1);
+}
+
+/* 🎛️ Custom Smooth Scrollbar Optimization */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #FAF6F0;
+}
+::-webkit-scrollbar-thumb {
+    background: #0F0F10;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #EA580C;
+}
