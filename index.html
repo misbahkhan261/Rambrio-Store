@@ -12,7 +12,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700&family=Syne:wght@800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght=400;500;700&family=Syne:wght=800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
 
@@ -22,14 +22,15 @@
                 scrolled: false, cartOpen: false, detailOpen: false,
                 
                 products: [
-                    { id: 'luna-glow-moon', name: 'LUNA GLOW 3D Moon Lamp', price: 2999, compareAt: 4499, tag: 'LIFESTYLE', img1: 'public/moon-lamp-1.png', img2: 'public/moon-lamp-2.png', img3: 'public/moon-lamp-3.png', currentPreview: 'public/moon-lamp-1.png' },
-                    { id: 'cosmic-crystal-orb', name: 'NEBULA 3D Crystal Ball Orb Light', price: 1299, compareAt: 2499, tag: 'LIFESTYLE', img1: 'public/crystal-ball-1.png', img2: 'public/crystal-ball-2.png', currentPreview: 'public/crystal-ball-1.png' },
-                    { id: 'lumos-study-hub', name: 'LED Study Lamp with Pen Holder & Phone Stand', price: 2399, compareAt: 3999, tag: 'GADGETS', img1: 'public/study-lamp-1.png', img2: 'public/study-lamp-2.png', currentPreview: 'public/study-lamp-1.png' },
-                    { id: 'wild-canopy-feeder', name: 'Waterproof Outdoor Wild Bird Hanging Grains Feeder', price: 1599, compareAt: 2999, tag: 'LIFESTYLE', img1: 'public/bird-feeder-1.png', img2: 'public/bird-feeder-2.png', img3: 'public/bird-feeder-3.png', currentPreview: 'public/bird-feeder-1.png' }
+                    { id: 'luna-glow-moon', name: 'LUNA GLOW 3D Moon Lamp', price: 2999, tag: 'LIFESTYLE', img1: 'public/moon-lamp-1.png' },
+                    { id: 'cosmic-crystal-orb', name: 'NEBULA 3D Crystal Ball Orb Light', price: 1299, tag: 'LIFESTYLE', img1: 'public/crystal-ball-1.png' },
+                    { id: 'lumos-study-hub', name: 'LED Study Lamp with Pen Holder', price: 2399, tag: 'GADGETS', img1: 'public/study-lamp-1.png' },
+                    { id: 'wild-canopy-feeder', name: 'Waterproof Outdoor Bird Feeder', price: 1599, tag: 'LIFESTYLE', img1: 'public/bird-feeder-1.png' }
                 ],
                 tickerItems: ['FREE EXPRESS SHIPPING OVER RS 5,000', 'NEW DROP EVERY 48 HOURS', '30-DAY EASY RETURNS', 'CASH ON DELIVERY AVAILABLE'],
                 
-                selectedProduct: {}, activeDetailImg: '', cart: [],
+                selectedProduct: { name: '', price: 0, tag: '', img1: '' }, 
+                cart: [],
                 
                 customerName: '', customerEmail: '', customerPhone: '', customerAddress: '',
                 paymentMethod: 'COD', 
@@ -37,9 +38,6 @@
                 
                 init() {
                     window.addEventListener('scroll', () => { this.scrolled = window.scrollY > 20; });
-                    if (typeof initialData !== 'undefined' && initialData.products && initialData.products.length > 0) {
-                        this.products = initialData.products.map(p => ({ ...p, currentPreview: p.img1 || p.img }));
-                    }
                 },
                 
                 get cartCount() { return this.cart.reduce((sum, item) => sum + item.qty, 0); },
@@ -48,11 +46,8 @@
                 get cartTotal() { return this.cartSubtotal + this.deliveryCharges; },
                 
                 openQuickView(product) {
-                    this.selectedProduct = product; this.activeDetailImg = product.img1 || product.currentPreview; this.detailOpen = true;
-                },
-                openHeroProduct() {
-                    const heroProduct = this.products.find(p => p.id === 'luna-glow-moon') || this.products[0];
-                    if (heroProduct) this.openQuickView(heroProduct);
+                    this.selectedProduct = product; 
+                    this.detailOpen = true;
                 },
                 addToCart(product) {
                     let found = this.cart.find(item => item.id === product.id);
@@ -138,9 +133,9 @@
                     </div>
                 </div>
                 <div class="lg:col-span-5">
-                    <div @click="openHeroProduct()" class="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-[#0F0F10]/5 border border-[#0F0F10]/10 p-3 shadow-xs group cursor-pointer transition-all hover:shadow-2xl">
+                    <div @click="openQuickView(products[0])" class="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-[#0F0F10]/5 border border-[#0F0F10]/10 p-3 shadow-xs group cursor-pointer transition-all hover:shadow-2xl">
                         <div class="w-full h-full overflow-hidden rounded-[2rem] bg-white relative">
-                            <img src="public/moon-lamp-1.png" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-95">
+                            <img src="public/moon-lamp-1.png" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-95" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
                             <span class="absolute left-6 top-6 rounded-full bg-red-600/10 glowing-badge text-red-600 font-mono text-[9px] uppercase tracking-widest font-bold px-3 py-1 z-20">33% OFF</span>
                         </div>
                         <div class="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl bg-[#FAF6F0]/95 border border-[#0F0F10]/10 px-6 py-4.5 shadow-sm">
@@ -158,10 +153,10 @@
                 <template x-for="product in products" :key="product.id">
                     <div class="group bg-white border border-[#0F0F10]/5 p-6 rounded-[2rem] shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                         <div class="relative aspect-square overflow-hidden rounded-[1.8rem] bg-[#0F0F10]/5 p-3 cursor-pointer" @click="openQuickView(product)">
-                            <img :src="product.currentPreview" class="w-full h-full object-cover rounded-[1.5rem] transition-transform duration-500 group-hover:scale-105">
+                            <img :src="product.img1" class="w-full h-full object-cover rounded-[1.5rem] transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
                         </div>
                         <div class="mt-6">
-                            <span class="font-mono text-[9px] uppercase tracking-widest font-bold text-[#059669] bg-[#059669]/10 border border-[#059669]/20 px-2.5 py-0.5 rounded-md" x-text="product.tag || 'LIFESTYLE'"></span>
+                            <span class="font-mono text-[9px] uppercase tracking-widest font-bold text-[#059669] bg-[#059669]/10 border border-[#059669]/20 px-2.5 py-0.5 rounded-md" x-text="product.tag"></span>
                             <h3 class="font-bold text-[#0F0F10] mt-3 text-lg sm:text-xl tracking-tight" x-text="product.name"></h3>
                             <div class="mt-4 flex items-center justify-between border-t border-[#0F0F10]/5 pt-4">
                                 <span class="heading-elite text-xl text-[#0F0F10]" x-text="'Rs ' + product.price.toLocaleString()"></span>
@@ -177,9 +172,9 @@
             <div @click.away="detailOpen = false" class="bg-white border border-[#0F0F10]/10 rounded-[2.5rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 md:p-10 relative shadow-2xl">
                 <button @click="detailOpen = false" class="absolute right-6 top-6 grid w-10 h-10 place-items-center rounded-full bg-[#FAF6F0] text-[#0F0F10]/60 hover:text-black font-bold z-10 border border-[#0F0F10]/5">✕</button>
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
-                    <div class="md:col-span-6 space-y-4">
-                        <div class="aspect-square bg-[#FAF6F0] rounded-2xl overflow-hidden border border-[#0F0F10]/5 p-2 relative">
-                            <img :src="activeDetailImg" class="w-full h-full object-cover rounded-xl">
+                    <div class="md:col-span-6">
+                        <div class="aspect-square bg-[#FAF6F0] rounded-2xl overflow-hidden border border-[#0F0F10]/5 p-2">
+                            <img :src="selectedProduct.img1" class="w-full h-full object-cover rounded-xl" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
                         </div>
                     </div>
                     <div class="md:col-span-6 flex flex-col h-full justify-between">
@@ -254,7 +249,7 @@
                     <div class="space-y-3 mb-8">
                         <template x-for="item in cart" :key="item.id">
                             <div class="flex gap-4 bg-[#FAF6F0]/50 border border-[#0F0F10]/5 p-3 rounded-2xl items-center shadow-sm">
-                                <img :src="item.img1" class="w-14 h-14 rounded-xl object-cover border border-[#0F0F10]/5">
+                                <img :src="item.img1" class="w-14 h-14 rounded-xl object-cover border border-[#0F0F10]/5" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
                                 <div class="flex-1">
                                     <h5 class="font-bold text-sm text-[#0F0F10] leading-tight" x-text="item.name"></h5>
                                     <span class="text-xs font-black text-[#EA580C] mt-1 block" x-text="'Rs ' + item.price.toLocaleString() + ' x ' + item.qty"></span>
@@ -296,11 +291,7 @@
                             <div class="p-5 rounded-2xl border border-[#0F0F10]/10 bg-white space-y-4 shadow-xl relative overflow-hidden">
                                 <div class="absolute top-0 left-0 w-full h-1 bg-[#EA580C]"></div>
                                 <p class="font-mono text-[9px] font-black text-[#EA580C] uppercase tracking-wider">Secure Payment Gateway</p>
-                                <input type="text" placeholder="Card Number (0000 0000 0000 0000)" class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black text-center tracking-[0.2em]">
-                                <div class="flex gap-3">
-                                    <input type="text" placeholder="MM/YY" class="w-1/2 bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black text-center tracking-widest">
-                                    <input type="text" placeholder="CVV" class="w-1/2 bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black text-center tracking-widest">
-                                </div>
+                                <input type="text" placeholder="Card Number" class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black text-center tracking-[0.2em]">
                             </div>
                         </div>
 
@@ -316,10 +307,10 @@
                 </div>
                 
                 <div class="p-6 border-t border-[#0F0F10]/5 bg-white shrink-0 z-10">
-                <button @click="submitOrder()" :disabled="orderLoading" class="w-full bg-[#0F0F10] text-white font-black py-5 rounded-2xl text-sm tracking-[0.15em] uppercase hover:bg-[#EA580C] transition-all duration-300 flex justify-center items-center gap-2 shadow-[0_10px_25px_-5px_rgba(15,15,16,0.4)] hover:shadow-[0_10px_25px_-5px_rgba(234,88,12,0.4)] hover:-translate-y-0.5 active:translate-y-0 text-center">
-        <span x-show="orderLoading">TRANSMITTING... ⏳</span>
-         <span x-show="!orderLoading">PLACE ORDER 🚀</span>
-                </button>
+                    <button @click="submitOrder()" :disabled="orderLoading" class="w-full bg-[#0F0F10] text-white font-black py-5 rounded-2xl text-sm tracking-[0.15em] uppercase hover:bg-[#EA580C] transition-all duration-300 flex justify-center items-center gap-2 shadow-lg">
+                        <span x-show="orderLoading">TRANSMITTING... ⏳</span>
+                        <span x-show="!orderLoading">PLACE ORDER 🚀</span>
+                    </button>
                 </div>
 
             </div>
