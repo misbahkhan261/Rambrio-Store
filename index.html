@@ -422,8 +422,7 @@
                                 <span class="heading-elite text-base text-[#EA580C]" x-text="'Rs ' + cartTotal.toLocaleString()"></span>
                             </div>
                         </div>
-
-                        <button type="submit" class="w-full bg-[#0F0F10] text-white font-bold py-3.5 rounded-xl text-xs tracking-widest uppercase hover:bg-[#EA580C] mt-2">PLACE ORDER VIA API ↗</button>
+                        <button x-on:click="placeOrder()" class="w-full bg-orange-600 text-white py-3 rounded-lg font-bold uppercase tracking-wider hover:bg-orange-700 transition">Place Order 🚀</button>
                     </form>
                 </div>
             </div>
