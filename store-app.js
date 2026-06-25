@@ -9,7 +9,7 @@ function storeCore() {
         testimonials: initialData.testimonials,
         newPName: '', newPPrice: '', newPTag: '', newPCompare: '',
         
-        // Checkout Fields
+        // Live Checkout Fields
         customerName: '',
         customerEmail: '',
         customerPhone: '',
@@ -47,14 +47,14 @@ function storeCore() {
         },
         deleteProduct(id) { this.products = this.products.filter(p => p.id !== id); },
 
-        // Live Order Submit Logic with Railway Connected
+        // Live Railway Order Submission
         async placeOrder() {
             if (!this.customerName || !this.customerEmail || !this.customerPhone || !this.customerAddress) {
-                alert('Please fill all fields!');
+                alert('Bhai, saari details fill karein pehle!');
                 return;
             }
             if (this.cart.length === 0) {
-                alert('Your cart is empty!');
+                alert('Aapka cart khali hai!');
                 return;
             }
 
@@ -68,12 +68,11 @@ function storeCore() {
                     address: this.customerAddress
                 },
                 items: this.cart,
-                total: this.cartTotal + 399, // Total + Delivery charges
+                total: this.cartTotal + 399,
                 payment: this.paymentMethod
             };
 
             try {
-                // Connecting to your Live Railway Backend
                 const response = await fetch('https://rambrio-store-production.up.railway.app/api/order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -82,7 +81,7 @@ function storeCore() {
 
                 if (response.ok) {
                     this.orderState = 'success';
-                    alert('🎉 Order Placed Successfully!');
+                    alert('🎉 Mubarak ho! Order Railway par submit ho gaya.');
                     this.cart = [];
                     this.customerName = '';
                     this.customerEmail = '';
@@ -91,14 +90,14 @@ function storeCore() {
                     this.cartOpen = false;
                 } else {
                     this.orderState = 'error';
-                    alert('❌ Server rejected order. Check console.');
+                    alert('❌ Server ne order reject kiya.');
                 }
             } catch (error) {
                 this.orderState = 'error';
                 console.error(error);
-                alert('❌ Connection Error! Railway Server is awake but something went wrong.');
+                alert('❌ Backend se connect nahi ho pa raha.');
             } finally {
-                setTimeout(() => this.orderState = 'idle', 5000);
+                setTimeout(() => this.orderState = 'idle', 3000);
             }
         }
     }
