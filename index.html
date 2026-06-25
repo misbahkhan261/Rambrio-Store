@@ -22,10 +22,10 @@
                 scrolled: false, cartOpen: false, detailOpen: false,
                 
                 products: [
-                    { id: 'luna-glow-moon', name: 'LUNA GLOW 3D Moon Lamp', price: 2999, compareAt: 4499, tag: 'LIFESTYLE', img1: 'public/moon-lamp-1.png' },
-                    { id: 'cosmic-crystal-orb', name: 'NEBULA 3D Crystal Ball Orb Light', price: 1299, compareAt: 2499, tag: 'LIFESTYLE', img1: 'public/crystal-ball-1.png' },
-                    { id: 'lumos-study-hub', name: 'LED Study Lamp with Pen Holder & Phone Stand', price: 2399, compareAt: 3999, tag: 'GADGETS', img1: 'public/study-lamp-1.png' },
-                    { id: 'wild-canopy-feeder', name: 'Waterproof Outdoor Wild Bird Hanging Grains Feeder', price: 1599, compareAt: 2999, tag: 'LIFESTYLE', img1: 'public/bird-feeder-1.png' }
+                    { id: 'luna-glow-moon', name: 'LUNA GLOW 3D Moon Lamp', price: 2999, compareAt: 4499, tag: 'LIFESTYLE', img1: 'public/moon-lamp-1.png', img2: 'public/moon-lamp-2.png', currentPreview: 'public/moon-lamp-1.png' },
+                    { id: 'cosmic-crystal-orb', name: 'NEBULA 3D Crystal Ball Orb Light', price: 1299, compareAt: 2499, tag: 'LIFESTYLE', img1: 'public/crystal-ball-1.png', img2: 'public/crystal-ball-2.png', currentPreview: 'public/crystal-ball-1.png' },
+                    { id: 'lumos-study-hub', name: 'LED Study Lamp with Pen Holder & Phone Stand', price: 2399, compareAt: 3999, tag: 'GADGETS', img1: 'public/study-lamp-1.png', img2: 'public/study-lamp-2.png', currentPreview: 'public/study-lamp-1.png' },
+                    { id: 'wild-canopy-feeder', name: 'Waterproof Outdoor Wild Bird Hanging Grains Feeder', price: 1599, compareAt: 2999, tag: 'LIFESTYLE', img1: 'public/bird-feeder-1.png', img2: 'public/bird-feeder-2.png', currentPreview: 'public/bird-feeder-1.png' }
                 ],
                 tickerItems: ['FREE EXPRESS SHIPPING OVER RS 5,000', 'NEW DROP EVERY 48 HOURS', '30-DAY EASY RETURNS', 'CASH ON DELIVERY AVAILABLE'],
                 
@@ -53,6 +53,10 @@
                     let found = this.cart.find(item => item.id === product.id);
                     if (found) { found.qty++; } else { this.cart.push({ ...product, qty: 1 }); }
                     this.cartOpen = true;
+                },
+                // ✕ CORE REMOVE MATRIX (Cancels an item entirely from the bag)
+                removeFromCart(productId) {
+                    this.cart = this.cart.filter(item => item.id !== productId);
                 },
                 
                 async submitOrder() {
@@ -135,7 +139,7 @@
                 <div class="lg:col-span-5">
                     <div @click="openQuickView(products[0])" class="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-[#0F0F10]/5 border border-[#0F0F10]/10 p-3 shadow-xs group cursor-pointer transition-all hover:shadow-2xl">
                         <div class="w-full h-full overflow-hidden rounded-[2rem] bg-white relative">
-                            <img src="public/moon-lamp-1.png" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-95" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
+                            <img :src="products[0].img1" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
                             <span class="absolute left-6 top-6 rounded-full bg-red-600/10 glowing-badge text-red-600 font-mono text-[9px] uppercase tracking-widest font-bold px-3 py-1 z-20">33% OFF</span>
                         </div>
                         <div class="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl bg-[#FAF6F0]/95 border border-[#0F0F10]/10 px-6 py-4.5 shadow-sm">
@@ -152,9 +156,18 @@
             <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-2">
                 <template x-for="product in products" :key="product.id">
                     <div class="group bg-white border border-[#0F0F10]/5 p-6 rounded-[2rem] shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                        
                         <div class="relative aspect-square overflow-hidden rounded-[1.8rem] bg-[#0F0F10]/5 p-3 cursor-pointer" @click="openQuickView(product)">
-                            <img :src="product.img1" class="w-full h-full object-cover rounded-[1.5rem] transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
+                            <div class="w-full h-full overflow-hidden rounded-[1.5rem] bg-white relative">
+                                <img :src="product.currentPreview" class="w-full h-full object-cover rounded-[1.5rem] transition-transform duration-700 ease-out group-hover:scale-110" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
+                                
+                                <div class="absolute inset-0 z-20 flex">
+                                    <div class="h-full w-1/2" @mouseenter="product.currentPreview = product.img1"></div>
+                                    <div class="h-full w-1/2" @mouseenter="product.currentPreview = product.img2 || product.img1"></div>
+                                </div>
+                            </div>
                         </div>
+                        
                         <div class="mt-6">
                             <span class="font-mono text-[9px] uppercase tracking-widest font-bold text-[#059669] bg-[#059669]/10 border border-[#059669]/20 px-2.5 py-0.5 rounded-md" x-text="product.tag"></span>
                             <h3 class="font-bold text-[#0F0F10] mt-3 text-lg sm:text-xl tracking-tight" x-text="product.name"></h3>
@@ -170,14 +183,11 @@
 
         <div x-show="detailOpen" class="fixed inset-0 z-50 bg-[#0F0F10]/40 backdrop-blur-md flex items-center justify-center p-4" style="display: none;" x-transition>
             <div @click.away="detailOpen = false" class="bg-white border border-[#0F0F10]/10 rounded-[2.5rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 md:p-10 relative shadow-2xl">
-                <button @click="detailOpen = false" class="absolute right-6 top-6 grid w-10 h-10 place-items-center rounded-full bg-[#FAF6F0] text-[#0F0F10]/60 hover:text-black font-bold z-10 border border-[#0F0F10]/10 hover:bg-[#0F0F10] hover:text-white transition-colors duration-300">✕</button>
+                <button @click="detailOpen = false" class="absolute right-6 top-6 grid w-10 h-10 place-items-center rounded-full bg-[#FAF6F0] text-[#0F0F10]/60 hover:text-black font-bold z-10 border border-[#0F0F10]/5">✕</button>
                 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
                     <div class="md:col-span-6">
                         <div class="aspect-square bg-[#FAF6F0] rounded-2xl overflow-hidden border border-[#0F0F10]/5 p-2 relative shadow-inner">
-                            <template x-if="selectedProduct.compareAt > selectedProduct.price">
-                                <span class="absolute left-6 top-6 rounded-full bg-red-600/10 glowing-badge text-red-600 font-mono text-[9px] uppercase tracking-widest font-bold px-3 py-1 z-20" x-text="Math.round((1 - selectedProduct.price / selectedProduct.compareAt) * 100) + '% OFF'"></span>
-                            </template>
                             <img :src="selectedProduct.img1" class="w-full h-full object-cover rounded-xl" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
                         </div>
                     </div>
@@ -189,26 +199,12 @@
                             
                             <div class="flex items-baseline gap-3 mb-6">
                                 <span class="heading-elite text-2xl text-[#EA580C]" x-text="'Rs ' + (selectedProduct.price || 0).toLocaleString()"></span>
-                                <template x-if="selectedProduct.compareAt">
-                                    <span class="text-sm line-through text-[#0F0F10]/30 font-mono" x-text="'Rs ' + selectedProduct.compareAt.toLocaleString()"></span>
-                                </template>
                             </div>
                             
                             <div class="space-y-4 border-t border-[#0F0F10]/10 pt-4 text-sm font-normal tracking-wide leading-relaxed text-[#0F0F10]/80">
                                 <div class="bg-[#FAF6F0] p-4.5 rounded-2xl border border-[#0F0F10]/5 shadow-inner text-xs">
                                     <span class="font-bold text-[#0F0F10] block mb-1">Premium Package Inclusions:</span>
                                     Main architecture core layout module, luxury package interface box, installation parameters layer grid, and system tracking secure protection blocks.
-                                </div>
-                                
-                                <div class="space-y-2 font-mono text-[9px] tracking-widest font-bold text-[#0F0F10]">
-                                    <div class="glowing-trust-box flex items-center gap-3 p-3 rounded-xl border border-[#0F0F10]/10 bg-[#FAF6F0]/50 shadow-xs">
-                                        <span class="flex size-5 items-center justify-center rounded-md bg-[#EA580C]/10 text-[#EA580C] text-[10px]">⚡</span>
-                                        <span>FREE SHIPPING OVER RS 5,000</span>
-                                    </div>
-                                    <div class="glowing-trust-box flex items-center gap-3 p-3 rounded-xl border border-[#0F0F10]/10 bg-[#FAF6F0]/50 shadow-xs">
-                                        <span class="flex size-5 items-center justify-center rounded-md bg-[#EA580C]/10 text-[#EA580C] text-[10px]">📦</span>
-                                        <span>7-10 DAYS NATIONWIDE DISPATCH</span>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -234,15 +230,6 @@
                         <div class="py-5">We dispatch all premium design objects from our main distribution center. Shipping takes 7 to 10 days, but your order can arrive even faster!</div>
                     </div>
                 </div>
-                <div class="border border-[#0F0F10]/10 bg-white rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-md">
-                    <button @click="activeFaq = (activeFaq === 2 ? null : 2)" class="w-full flex justify-between items-center px-6 py-5 font-bold text-left text-[#0F0F10] hover:bg-[#FAF6F0]/50">
-                        <span>Do you support Secure Cash on Delivery (COD)?</span>
-                        <span class="text-lg transition-transform" :class="activeFaq === 2 ? 'rotate-45 text-[#EA580C]' : ''">+</span>
-                    </button>
-                    <div x-show="activeFaq === 2" x-collapse class="px-6 text-sm text-[#0F0F10]/60 font-medium border-t border-[#0F0F10]/5">
-                        <div class="py-5">Yes, absolutely! Nationwide Cash on Delivery is active with an identical flat rate of Rs 399 calculated at the processing ledger.</div>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -251,17 +238,10 @@
                 <div>
                     <p class="font-mono text-[10px] uppercase tracking-widest font-bold text-[#059669]">/ CORE LINK LINE</p>
                     <h2 class="heading-elite text-3xl uppercase mt-2 mb-4 text-[#0F0F10]">Elite Customer Concierge</h2>
-                    <p class="text-sm text-[#0F0F10]/60 font-medium leading-relaxed mb-6">Encountering configuration hurdles? Shoot our routing network a ticket and we will handle the rest.</p>
                     <div class="space-y-3 font-mono text-xs font-bold text-[#0F0F10]/80">
                         <div class="flex items-center gap-2"><span>💬 WHATSAPP ENGINE:</span><span class="text-[#EA580C]">+92 300 0000000</span></div>
-                        <div class="flex items-center gap-2"><span>✉️ SYSTEM EMAIL:</span><span class="text-[#EA580C]">rimberiostore80@gmail.com</span></div>
                     </div>
                 </div>
-                <form @submit.prevent="alert('Support ticket transmitted into the core channel.')" class="space-y-4">
-                    <input type="text" placeholder="Your Full Name" required class="w-full bg-[#FAF6F0]/60 border border-[#0F0F10]/10 p-4 rounded-xl text-sm font-medium outline-none">
-                    <textarea placeholder="Describe your layout issue..." rows="3" required class="w-full bg-[#FAF6F0]/60 border border-[#0F0F10]/10 p-4 rounded-xl text-sm font-medium outline-none resize-none"></textarea>
-                    <button type="submit" class="w-full bg-[#0F0F10] text-white font-bold py-4 rounded-xl text-xs tracking-widest uppercase hover:bg-[#EA580C] transition-all duration-300">TRANSMIT SUPPORT TICKET ↗</button>
-                </form>
             </div>
         </section>
 
@@ -276,12 +256,21 @@
                 <div class="flex-1 overflow-y-auto p-6 scroll-smooth">
                     <div class="space-y-3 mb-8">
                         <template x-for="item in cart" :key="item.id">
-                            <div class="flex gap-4 bg-[#FAF6F0]/50 border border-[#0F0F10]/5 p-3 rounded-2xl items-center shadow-sm">
+                            <div class="flex gap-4 bg-[#FAF6F0]/50 border border-[#0F0F10]/5 p-3 rounded-2xl items-center shadow-sm relative group">
                                 <img :src="item.img1" class="w-14 h-14 rounded-xl object-cover border border-[#0F0F10]/5" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
                                 <div class="flex-1">
                                     <h5 class="font-bold text-sm text-[#0F0F10] leading-tight" x-text="item.name"></h5>
                                     <span class="text-xs font-black text-[#EA580C] mt-1 block" x-text="'Rs ' + item.price.toLocaleString() + ' x ' + item.qty"></span>
                                 </div>
+                                <button @click="removeFromCart(item.id)" class="text-[#0F0F10]/30 hover:text-red-600 font-bold text-sm p-2 transition-colors">
+                                    ✕
+                                </button>
+                            </div>
+                        </template>
+                        <template x-if="cart.length === 0">
+                            <div class="text-center py-10 opacity-50">
+                                <span class="text-4xl block mb-2">🛒</span>
+                                <p class="text-xs font-bold text-[#0F0F10] uppercase tracking-wider">Your ecosystem is empty</p>
                             </div>
                         </template>
                     </div>
@@ -343,12 +332,6 @@
 
             </div>
         </div>
-
-        <footer class="border-t border-[#0F0F10]/5 bg-white mt-12 px-6">
-            <div class="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4 py-8 text-[10px] font-mono font-bold text-[#0F0F10]/40">
-                <p>© 2026 RIMBERIO LABS · DISTRIBUTION PLATFORM LAYER</p>
-            </div>
-        </footer>
     </div>
 </body>
 </html>
