@@ -316,10 +316,10 @@
                 </div>
                 
                 <div class="p-6 border-t border-[#0F0F10]/5 bg-white shrink-0 z-10">
-                    <button @click="submitOrder()" :disabled="orderLoading" class="w-full bg-[#0F0F10] text-white font-bold py-4.5 rounded-2xl text-xs tracking-widest uppercase hover:bg-[#EA580C] transition-all duration-300 flex justify-center items-center gap-2 shadow-lg">
-                        <span x-show="orderLoading">LOADING... ⏳</span>
-                        <span x-show="!orderLoading">PLACE ORDER 🚀</span>
-                    </button>
+                <button @click="submitOrder()" :disabled="orderLoading" class="w-full bg-[#0F0F10] text-white font-black py-5 rounded-2xl text-sm tracking-[0.15em] uppercase hover:bg-[#EA580C] transition-all duration-300 flex justify-center items-center gap-2 shadow-[0_10px_25px_-5px_rgba(15,15,16,0.4)] hover:shadow-[0_10px_25px_-5px_rgba(234,88,12,0.4)] hover:-translate-y-0.5 active:translate-y-0 text-center">
+        <span x-show="orderLoading">TRANSMITTING... ⏳</span>
+         <span x-show="!orderLoading">PLACE ORDER 🚀</span>
+                </button>
                 </div>
 
             </div>
