@@ -161,6 +161,7 @@
                             <img :src="product.currentPreview" class="w-full h-full object-cover rounded-[1.5rem] transition-transform duration-500 group-hover:scale-105">
                         </div>
                         <div class="mt-6">
+                            <span class="font-mono text-[9px] uppercase tracking-widest font-bold text-[#059669] bg-[#059669]/10 border border-[#059669]/20 px-2.5 py-0.5 rounded-md" x-text="product.tag || 'LIFESTYLE'"></span>
                             <h3 class="font-bold text-[#0F0F10] mt-3 text-lg sm:text-xl tracking-tight" x-text="product.name"></h3>
                             <div class="mt-4 flex items-center justify-between border-t border-[#0F0F10]/5 pt-4">
                                 <span class="heading-elite text-xl text-[#0F0F10]" x-text="'Rs ' + product.price.toLocaleString()"></span>
@@ -194,6 +195,52 @@
                 </div>
             </div>
         </div>
+
+        <section id="faqs" class="px-6 py-24 max-w-4xl mx-auto border-t border-[#0F0F10]/10" x-data="{ activeFaq: null }">
+            <div class="text-center mb-16">
+                <p class="font-mono text-[10px] uppercase tracking-widest font-bold text-[#EA580C]">/ INSTANT ACCELERATION</p>
+                <h2 class="heading-elite text-3xl uppercase mt-2">Frequently Asked Questions</h2>
+            </div>
+            <div class="space-y-4">
+                <div class="border border-[#0F0F10]/10 bg-white rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-md">
+                    <button @click="activeFaq = (activeFaq === 1 ? null : 1)" class="w-full flex justify-between items-center px-6 py-5 font-bold text-left text-[#0F0F10] hover:bg-[#FAF6F0]/50">
+                        <span>What is the standard delivery timeline?</span>
+                        <span class="text-lg transition-transform" :class="activeFaq === 1 ? 'rotate-45 text-[#EA580C]' : ''">+</span>
+                    </button>
+                    <div x-show="activeFaq === 1" x-collapse class="px-6 text-sm text-[#0F0F10]/60 font-medium border-t border-[#0F0F10]/5">
+                        <div class="py-5">We dispatch all premium design objects from our main distribution center. Shipping takes 7 to 10 days, but your order can arrive even faster!</div>
+                    </div>
+                </div>
+                <div class="border border-[#0F0F10]/10 bg-white rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-md">
+                    <button @click="activeFaq = (activeFaq === 2 ? null : 2)" class="w-full flex justify-between items-center px-6 py-5 font-bold text-left text-[#0F0F10] hover:bg-[#FAF6F0]/50">
+                        <span>Do you support Secure Cash on Delivery (COD)?</span>
+                        <span class="text-lg transition-transform" :class="activeFaq === 2 ? 'rotate-45 text-[#EA580C]' : ''">+</span>
+                    </button>
+                    <div x-show="activeFaq === 2" x-collapse class="px-6 text-sm text-[#0F0F10]/60 font-medium border-t border-[#0F0F10]/5">
+                        <div class="py-5">Yes, absolutely! Nationwide Cash on Delivery is active with an identical flat rate of Rs 399 calculated at the processing ledger.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="support" class="px-6 py-24 max-w-5xl mx-auto border-t border-[#0F0F10]/10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center bg-white border border-[#0F0F10]/10 p-8 md:p-12 rounded-[2.5rem] shadow-sm">
+                <div>
+                    <p class="font-mono text-[10px] uppercase tracking-widest font-bold text-[#059669]">/ CORE LINK LINE</p>
+                    <h2 class="heading-elite text-3xl uppercase mt-2 mb-4 text-[#0F0F10]">Elite Customer Concierge</h2>
+                    <p class="text-sm text-[#0F0F10]/60 font-medium leading-relaxed mb-6">Encountering configuration hurdles? Shoot our routing network a ticket and we will handle the rest.</p>
+                    <div class="space-y-3 font-mono text-xs font-bold text-[#0F0F10]/80">
+                        <div class="flex items-center gap-2"><span>💬 WHATSAPP ENGINE:</span><span class="text-[#EA580C]">+92 300 0000000</span></div>
+                        <div class="flex items-center gap-2"><span>✉️ SYSTEM EMAIL:</span><span class="text-[#EA580C]">rimberiostore80@gmail.com</span></div>
+                    </div>
+                </div>
+                <form @submit.prevent="alert('Support ticket transmitted into the core channel.')" class="space-y-4">
+                    <input type="text" placeholder="Your Full Name" required class="w-full bg-[#FAF6F0]/60 border border-[#0F0F10]/10 p-4 rounded-xl text-sm font-medium outline-none">
+                    <textarea placeholder="Describe your layout issue..." rows="3" required class="w-full bg-[#FAF6F0]/60 border border-[#0F0F10]/10 p-4 rounded-xl text-sm font-medium outline-none resize-none"></textarea>
+                    <button type="submit" class="w-full bg-[#0F0F10] text-white font-bold py-4 rounded-xl text-xs tracking-widest uppercase hover:bg-[#EA580C] transition-all duration-300">TRANSMIT SUPPORT TICKET ↗</button>
+                </form>
+            </div>
+        </section>
 
         <div x-show="cartOpen" class="fixed inset-0 z-50 bg-[#0F0F10]/40 backdrop-blur-sm" style="display: none;" x-transition>
             <div @click.away="cartOpen = false" class="absolute right-0 top-0 h-full w-full max-w-md bg-white border-l border-[#0F0F10]/10 flex flex-col shadow-2xl">
@@ -270,13 +317,19 @@
                 
                 <div class="p-6 border-t border-[#0F0F10]/5 bg-white shrink-0 z-10">
                     <button @click="submitOrder()" :disabled="orderLoading" class="w-full bg-[#0F0F10] text-white font-bold py-4.5 rounded-2xl text-xs tracking-widest uppercase hover:bg-[#EA580C] transition-all duration-300 flex justify-center items-center gap-2 shadow-lg">
-                        <span x-show="orderLoading">TRANSMITTING... ⏳</span>
+                        <span x-show="orderLoading">LOADING... ⏳</span>
                         <span x-show="!orderLoading">PLACE ORDER 🚀</span>
                     </button>
                 </div>
 
             </div>
         </div>
+
+        <footer class="border-t border-[#0F0F10]/5 bg-white mt-12 px-6">
+            <div class="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4 py-8 text-[10px] font-mono font-bold text-[#0F0F10]/40">
+                <p>© 2026 RIMBERIO LABS · DISTRIBUTION PLATFORM LAYER</p>
+            </div>
+        </footer>
     </div>
 </body>
 </html>
