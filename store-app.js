@@ -9,6 +9,14 @@ function storeCore() {
         testimonials: initialData.testimonials,
         newPName: '', newPPrice: '', newPTag: '', newPCompare: '',
         
+        // Checkout Fields
+        customerName: '',
+        customerEmail: '',
+        customerPhone: '',
+        customerAddress: '',
+        paymentMethod: 'COD',
+        orderState: 'idle', // idle, loading, success, error
+
         init() { 
             window.addEventListener('scroll', () => { this.scrolled = window.scrollY > 24 }) 
         },
@@ -37,6 +45,61 @@ function storeCore() {
                 alert('Ecosystem Synchronized!');
             }
         },
-        deleteProduct(id) { this.products = this.products.filter(p => p.id !== id); }
+        deleteProduct(id) { this.products = this.products.filter(p => p.id !== id); },
+
+        // Live Order Submit Logic with Railway Connected
+        async placeOrder() {
+            if (!this.customerName || !this.customerEmail || !this.customerPhone || !this.customerAddress) {
+                alert('Please fill all fields!');
+                return;
+            }
+            if (this.cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+
+            this.orderState = 'loading';
+
+            const orderData = {
+                customer: {
+                    name: this.customerName,
+                    email: this.customerEmail,
+                    phone: this.customerPhone,
+                    address: this.customerAddress
+                },
+                items: this.cart,
+                total: this.cartTotal + 399, // Total + Delivery charges
+                payment: this.paymentMethod
+            };
+
+            try {
+                // Connecting to your Live Railway Backend
+                const response = await fetch('https://rambrio-store-production.up.railway.app/api/order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+
+                if (response.ok) {
+                    this.orderState = 'success';
+                    alert('🎉 Order Placed Successfully!');
+                    this.cart = [];
+                    this.customerName = '';
+                    this.customerEmail = '';
+                    this.customerPhone = '';
+                    this.customerAddress = '';
+                    this.cartOpen = false;
+                } else {
+                    this.orderState = 'error';
+                    alert('❌ Server rejected order. Check console.');
+                }
+            } catch (error) {
+                this.orderState = 'error';
+                console.error(error);
+                alert('❌ Connection Error! Railway Server is awake but something went wrong.');
+            } finally {
+                setTimeout(() => this.orderState = 'idle', 5000);
+            }
+        }
     }
 }
