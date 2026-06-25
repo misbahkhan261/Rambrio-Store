@@ -12,7 +12,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght=400;500;700&family=Syne:wght=800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700&family=Syne:wght@800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
 
@@ -22,14 +22,14 @@
                 scrolled: false, cartOpen: false, detailOpen: false,
                 
                 products: [
-                    { id: 'luna-glow-moon', name: 'LUNA GLOW 3D Moon Lamp', price: 2999, tag: 'LIFESTYLE', img1: 'public/moon-lamp-1.png' },
-                    { id: 'cosmic-crystal-orb', name: 'NEBULA 3D Crystal Ball Orb Light', price: 1299, tag: 'LIFESTYLE', img1: 'public/crystal-ball-1.png' },
-                    { id: 'lumos-study-hub', name: 'LED Study Lamp with Pen Holder', price: 2399, tag: 'GADGETS', img1: 'public/study-lamp-1.png' },
-                    { id: 'wild-canopy-feeder', name: 'Waterproof Outdoor Bird Feeder', price: 1599, tag: 'LIFESTYLE', img1: 'public/bird-feeder-1.png' }
+                    { id: 'luna-glow-moon', name: 'LUNA GLOW 3D Moon Lamp', price: 2999, compareAt: 4499, tag: 'LIFESTYLE', img1: 'public/moon-lamp-1.png' },
+                    { id: 'cosmic-crystal-orb', name: 'NEBULA 3D Crystal Ball Orb Light', price: 1299, compareAt: 2499, tag: 'LIFESTYLE', img1: 'public/crystal-ball-1.png' },
+                    { id: 'lumos-study-hub', name: 'LED Study Lamp with Pen Holder & Phone Stand', price: 2399, compareAt: 3999, tag: 'GADGETS', img1: 'public/study-lamp-1.png' },
+                    { id: 'wild-canopy-feeder', name: 'Waterproof Outdoor Wild Bird Hanging Grains Feeder', price: 1599, compareAt: 2999, tag: 'LIFESTYLE', img1: 'public/bird-feeder-1.png' }
                 ],
                 tickerItems: ['FREE EXPRESS SHIPPING OVER RS 5,000', 'NEW DROP EVERY 48 HOURS', '30-DAY EASY RETURNS', 'CASH ON DELIVERY AVAILABLE'],
                 
-                selectedProduct: { name: '', price: 0, tag: '', img1: '' }, 
+                selectedProduct: { name: '', price: 0, tag: '', img1: '', id: '', compareAt: 0 }, 
                 cart: [],
                 
                 customerName: '', customerEmail: '', customerPhone: '', customerAddress: '',
@@ -168,23 +168,51 @@
             </div>
         </section>
 
-        <div x-show="detailOpen" class="fixed inset-0 z-50 bg-[#0F0F10]/40 backdrop-blur-sm flex items-center justify-center p-4" style="display: none;" x-transition>
+        <div x-show="detailOpen" class="fixed inset-0 z-50 bg-[#0F0F10]/40 backdrop-blur-md flex items-center justify-center p-4" style="display: none;" x-transition>
             <div @click.away="detailOpen = false" class="bg-white border border-[#0F0F10]/10 rounded-[2.5rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 md:p-10 relative shadow-2xl">
-                <button @click="detailOpen = false" class="absolute right-6 top-6 grid w-10 h-10 place-items-center rounded-full bg-[#FAF6F0] text-[#0F0F10]/60 hover:text-black font-bold z-10 border border-[#0F0F10]/5">✕</button>
+                <button @click="detailOpen = false" class="absolute right-6 top-6 grid w-10 h-10 place-items-center rounded-full bg-[#FAF6F0] text-[#0F0F10]/60 hover:text-black font-bold z-10 border border-[#0F0F10]/10 hover:bg-[#0F0F10] hover:text-white transition-colors duration-300">✕</button>
+                
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
                     <div class="md:col-span-6">
-                        <div class="aspect-square bg-[#FAF6F0] rounded-2xl overflow-hidden border border-[#0F0F10]/5 p-2">
+                        <div class="aspect-square bg-[#FAF6F0] rounded-2xl overflow-hidden border border-[#0F0F10]/5 p-2 relative shadow-inner">
+                            <template x-if="selectedProduct.compareAt > selectedProduct.price">
+                                <span class="absolute left-6 top-6 rounded-full bg-red-600/10 glowing-badge text-red-600 font-mono text-[9px] uppercase tracking-widest font-bold px-3 py-1 z-20" x-text="Math.round((1 - selectedProduct.price / selectedProduct.compareAt) * 100) + '% OFF'"></span>
+                            </template>
                             <img :src="selectedProduct.img1" class="w-full h-full object-cover rounded-xl" onerror="this.src='https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=500'">
                         </div>
                     </div>
-                    <div class="md:col-span-6 flex flex-col h-full justify-between">
+                    
+                    <div class="md:col-span-6 flex flex-col h-full justify-between space-y-6">
                         <div>
                             <span class="font-mono text-[9px] uppercase tracking-widest font-bold text-[#059669] bg-[#059669]/10 border border-[#059669]/20 px-2.5 py-0.5 rounded-md" x-text="selectedProduct.tag"></span>
                             <h2 class="heading-elite text-2xl sm:text-3xl uppercase tracking-tight text-[#0F0F10] mt-3 mb-4 leading-tight" x-text="selectedProduct.name"></h2>
+                            
                             <div class="flex items-baseline gap-3 mb-6">
                                 <span class="heading-elite text-2xl text-[#EA580C]" x-text="'Rs ' + (selectedProduct.price || 0).toLocaleString()"></span>
+                                <template x-if="selectedProduct.compareAt">
+                                    <span class="text-sm line-through text-[#0F0F10]/30 font-mono" x-text="'Rs ' + selectedProduct.compareAt.toLocaleString()"></span>
+                                </template>
+                            </div>
+                            
+                            <div class="space-y-4 border-t border-[#0F0F10]/10 pt-4 text-sm font-normal tracking-wide leading-relaxed text-[#0F0F10]/80">
+                                <div class="bg-[#FAF6F0] p-4.5 rounded-2xl border border-[#0F0F10]/5 shadow-inner text-xs">
+                                    <span class="font-bold text-[#0F0F10] block mb-1">Premium Package Inclusions:</span>
+                                    Main architecture core layout module, luxury package interface box, installation parameters layer grid, and system tracking secure protection blocks.
+                                </div>
+                                
+                                <div class="space-y-2 font-mono text-[9px] tracking-widest font-bold text-[#0F0F10]">
+                                    <div class="glowing-trust-box flex items-center gap-3 p-3 rounded-xl border border-[#0F0F10]/10 bg-[#FAF6F0]/50 shadow-xs">
+                                        <span class="flex size-5 items-center justify-center rounded-md bg-[#EA580C]/10 text-[#EA580C] text-[10px]">⚡</span>
+                                        <span>FREE SHIPPING OVER RS 5,000</span>
+                                    </div>
+                                    <div class="glowing-trust-box flex items-center gap-3 p-3 rounded-xl border border-[#0F0F10]/10 bg-[#FAF6F0]/50 shadow-xs">
+                                        <span class="flex size-5 items-center justify-center rounded-md bg-[#EA580C]/10 text-[#EA580C] text-[10px]">📦</span>
+                                        <span>7-10 DAYS NATIONWIDE DISPATCH</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        
                         <button @click="addToCart(selectedProduct); detailOpen = false;" class="w-full bg-[#EA580C] text-white font-bold py-4 rounded-xl text-xs tracking-widest uppercase hover:bg-[#0F0F10] transition-colors shadow-md">ADD TO CART & CHECKOUT ↗</button>
                     </div>
                 </div>
