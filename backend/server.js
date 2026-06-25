@@ -56,7 +56,7 @@ async function connectDatabase() {
   try {
     mongoose.set("strictQuery", true);
     await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000, // Quick timeout so it doesn't hang locally
+      serverSelectionTimeoutMS: 5000, 
       autoIndex: true,
     });
     console.log("[DB] MongoDB connection established successfully.");
@@ -162,7 +162,20 @@ function buildCustomerEmailHtml(order) {
 }
 
 /* ----------------------------------------------------------------------------
- * 7. MAIN API ENDPOINT — POST /api/checkout
+ * 7. AUTOMATED PRODUCT INVENTORY GATEWAY (Dynamic Sync API Layer)
+ * ------------------------------------------------------------------------- */
+app.get('/api/products', (req, res) => {
+    const products = [
+        { id: 'luna-glow-moon', name: 'LUNA GLOW 3D Moon Lamp', price: 2999, compareAt: 4499, tag: 'LIFESTYLE', img1: 'public/moon-lamp-1.png', img2: 'public/moon-lamp-2.png' },
+        { id: 'cosmic-crystal-orb', name: 'NEBULA 3D Crystal Ball Orb Light', price: 1299, compareAt: 2499, tag: 'LIFESTYLE', img1: 'public/crystal-ball-1.png', img2: 'public/crystal-ball-2.png' },
+        { id: 'lumos-study-hub', name: 'LED Study Lamp with Pen Holder & Phone Stand', price: 2399, compareAt: 3999, tag: 'GADGETS', img1: 'public/study-lamp-1.png', img2: 'public/study-lamp-2.png' },
+        { id: 'wild-canopy-feeder', name: 'Waterproof Outdoor Wild Bird Hanging Grains Feeder', price: 1599, compareAt: 2999, tag: 'LIFESTYLE', img1: 'public/bird-feeder-1.png', img2: 'public/bird-feeder-2.png' }
+    ];
+    return res.status(200).json({ success: true, products });
+});
+
+/* ----------------------------------------------------------------------------
+ * 8. MAIN API ENDPOINT — POST /api/checkout
  * ------------------------------------------------------------------------- */
 app.post("/api/checkout", async (req, res) => {
   try {
@@ -184,7 +197,6 @@ app.post("/api/checkout", async (req, res) => {
       orderStatus: "Pending",
     };
 
-    // Database save only runs if mongoose connection status is healthy
     if (mongoose.connection.readyState === 1) {
       const order = new Order(orderData);
       await order.save();
@@ -192,7 +204,6 @@ app.post("/api/checkout", async (req, res) => {
       console.log("[CHECKOUT] DB Offline mode. Order processed through local memory layer safely.");
     }
 
-    // Nodemailer notification pipeline
     const fromAddress = process.env.MAIL_FROM || `"Rimberio Labs" <${process.env.SMTP_USER}>`;
     
     mailTransport.sendMail({
@@ -214,7 +225,7 @@ app.post("/api/checkout", async (req, res) => {
 });
 
 /* ----------------------------------------------------------------------------
- * 8. AUXILIARY HEALTH PATHS
+ * 9. AUXILIARY HEALTH PATHS
  * ------------------------------------------------------------------------- */
 app.get("/api/health", (req, res) => {
   res.status(200).json({
@@ -225,7 +236,7 @@ app.get("/api/health", (req, res) => {
 });
 
 /* ----------------------------------------------------------------------------
- * 9. ENGINE BOOTSTRAP
+ * 10. ENGINE BOOTSTRAP
  * ------------------------------------------------------------------------- */
 (async function start() {
   await connectDatabase();
@@ -235,13 +246,3 @@ app.get("/api/health", (req, res) => {
 })();
 
 module.exports = app;
-
-// Backend dynamic API mapping
-app.get('/api/products', (req, res) => {
-    const products = [
-        { id: 'luna-glow-moon', name: 'LUNA GLOW 3D Moon Lamp', price: 2999, tag: 'LIFESTYLE', img1: 'public/moon-lamp-1.png', img2: 'public/moon-lamp-2.png' },
-        { id: 'cosmic-crystal-orb', name: 'NEBULA 3D Crystal Ball Orb Light', price: 1299, tag: 'LIFESTYLE', img1: 'public/crystal-ball-1.png', img2: 'public/crystal-ball-2.png' },
-        // Kal ko naya product aaye toh bas yahan 1 line add hogi, HTML ko chhernay ki zaroorat hi nahi!
-    ];
-    res.json({ success: true, products });
-});
