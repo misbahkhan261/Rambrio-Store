@@ -235,3 +235,13 @@ app.get("/api/health", (req, res) => {
 })();
 
 module.exports = app;
+
+// Backend dynamic API mapping
+app.get('/api/products', (req, res) => {
+    const products = [
+        { id: 'luna-glow-moon', name: 'LUNA GLOW 3D Moon Lamp', price: 2999, tag: 'LIFESTYLE', img1: 'public/moon-lamp-1.png', img2: 'public/moon-lamp-2.png' },
+        { id: 'cosmic-crystal-orb', name: 'NEBULA 3D Crystal Ball Orb Light', price: 1299, tag: 'LIFESTYLE', img1: 'public/crystal-ball-1.png', img2: 'public/crystal-ball-2.png' },
+        // Kal ko naya product aaye toh bas yahan 1 line add hogi, HTML ko chhernay ki zaroorat hi nahi!
+    ];
+    res.json({ success: true, products });
+});
