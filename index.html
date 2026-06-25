@@ -7,6 +7,15 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700&family=Syne:wght@800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('storeCore', () => ({
@@ -14,9 +23,8 @@
                 cartOpen: false,
                 detailOpen: false,
                 
-                // Live product mapping layer array tracking fallback matrix
                 products: [
-                    { id: 'luna-glow-moon', name: 'LUNA GLOW 3D Moon Lamp', price: 2999, compareAt: 4499, tag: 'LIFESTYLE', img1: 'public/moon-lamp-1.png', img2: 'public/moon-lamp-2.png', img3: 'public/moon-lamp-3.png', currentPreview: 'public/moon-moon-1.png' },
+                    { id: 'luna-glow-moon', name: 'LUNA GLOW 3D Moon Lamp', price: 2999, compareAt: 4499, tag: 'LIFESTYLE', img1: 'public/moon-lamp-1.png', img2: 'public/moon-lamp-2.png', img3: 'public/moon-lamp-3.png', currentPreview: 'public/moon-lamp-1.png' },
                     { id: 'cosmic-crystal-orb', name: 'NEBULA 3D Crystal Ball Orb Light', price: 1299, compareAt: 2499, tag: 'LIFESTYLE', img1: 'public/crystal-ball-1.png', img2: 'public/crystal-ball-2.png', currentPreview: 'public/crystal-ball-1.png' },
                     { id: 'lumos-study-hub', name: 'LED Study Lamp with Pen Holder & Phone Stand', price: 2399, compareAt: 3999, tag: 'GADGETS', img1: 'public/study-lamp-1.png', img2: 'public/study-lamp-2.png', currentPreview: 'public/study-lamp-1.png' },
                     { id: 'wild-canopy-feeder', name: 'Waterproof Outdoor Wild Bird Hanging Grains Feeder', price: 1599, compareAt: 2999, tag: 'LIFESTYLE', img1: 'public/bird-feeder-1.png', img2: 'public/bird-feeder-2.png', img3: 'public/bird-feeder-3.png', currentPreview: 'public/bird-feeder-1.png' }
@@ -33,7 +41,7 @@
                 customerEmail: '',
                 customerPhone: '',
                 customerAddress: '',
-                paymentMethod: 'COD', 
+                paymentMethod: 'COD', // Default Payment Method
                 orderLoading: false,
                 
                 init() {
@@ -94,13 +102,13 @@
                         });
                         const result = await response.json();
                         if (response.ok && result.success) {
-                            alert('🎉 RIMBERIO ORDER PLACED SUCCESSFULLY ON RAILWAY!');
+                            alert('🎉 ELITE ORDER SECURED! Transmitted to Railway.');
                             this.cart = []; this.customerName = ''; this.customerEmail = ''; this.customerPhone = ''; this.customerAddress = ''; this.cartOpen = false;
                         } else {
                             alert('⚠️ Backend Error: ' + (result.message || 'Order reject ho gaya.'));
                         }
                     } catch (error) {
-                        alert('❌ Connection Error! Railway integration is working fine, check your live server logs.');
+                        alert('❌ Connection Error! Server offline ya unreachable hai.');
                     } finally {
                         this.orderLoading = false;
                     }
@@ -108,47 +116,33 @@
             }));
         });
     </script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700&family=Syne:wght@800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="style.css">
-
 </head>
-<body class="overflow-x-hidden antialiased">
+<body class="overflow-x-hidden antialiased bg-[#FAF6F0] text-[#0F0F10]">
 
     <div x-data="storeCore()">
+        
         <div class="w-screen overflow-hidden bg-[#0F0F10] text-[#FAF6F0] py-2.5 border-b border-white/5 font-mono text-[9px] font-bold tracking-widest relative z-50">
             <div class="flex whitespace-nowrap animate-marquee gap-12 justify-around">
-                <template x-for="ticker in tickerItems">
-                    <span class="inline-block" x-text="'// ' + ticker"></span>
-                </template>
-                <template x-for="ticker in tickerItems">
-                    <span class="inline-block" x-text="'// ' + ticker"></span>
-                </template>
+                <template x-for="ticker in tickerItems"><span class="inline-block" x-text="'// ' + ticker"></span></template>
+                <template x-for="ticker in tickerItems"><span class="inline-block" x-text="'// ' + ticker"></span></template>
             </div>
         </div>
 
         <header class="fixed inset-x-0 top-8 z-40 transition-all duration-500" :class="scrolled ? 'px-4 py-2' : 'px-6 py-4'">
             <div class="mx-auto flex max-w-7xl items-center justify-between border px-8 py-4 bg-[#FAF6F0]/80 backdrop-blur-xl rounded-2xl glowing-navbar transition-all duration-500">
-                
                 <div class="flex items-center gap-2 cursor-pointer group" onclick="window.location.reload()">
                     <div class="bg-[#0F0F10] text-[#FAF6F0] heading-elite text-xs px-2.5 py-1.5 rounded-lg tracking-widest font-black">R.</div>
                     <span class="heading-elite text-xl uppercase tracking-tighter text-[#0F0F10] font-black">RIMBERIO</span>
                 </div>
-
                 <nav class="hidden md:flex items-center gap-10">
                     <a href="#trending" class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#0F0F10]/60 hover:text-[#EA580C] transition-colors">LIVE DROPS</a>
                     <a href="#faqs" class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#0F0F10]/60 hover:text-[#EA580C] transition-colors">FAQS</a>
                     <a href="#support" class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#0F0F10]/60 hover:text-[#EA580C] transition-colors">SUPPORT</a>
                 </nav>
-                
                 <div class="flex items-center gap-2">
                     <button @click="cartOpen = true" class="relative grid size-9 place-items-center rounded-full text-[#0F0F10]/80 hover:bg-[#0F0F10]/5 transition-colors">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                        <span x-show="cartCount > 0" class="absolute right-0 top-0 grid size-4.5 place-items-center rounded-full bg-[#EA580C] font-mono text-[9px] text-white font-bold" x-text="cartCount"></span>
+                        <span x-show="cartCount > 0" class="absolute right-0 top-0 grid size-4.5 place-items-center rounded-full bg-[#EA580C] font-mono text-[9px] text-white font-bold shadow-md" x-text="cartCount"></span>
                     </button>
                 </div>
             </div>
@@ -164,16 +158,16 @@
                     </h1>
                     <p class="max-w-lg text-[#0F0F10]/60 text-sm font-medium leading-relaxed mb-10">No endless scrolling. Just hyper-curated premium lifestyle gadgets and aesthetics engineered to elevate your everyday ecosystem.</p>
                     <div>
-                        <button @click="document.getElementById('trending').scrollIntoView({ behavior: 'smooth' })" class="bg-[#0F0F10] text-white font-bold px-8 py-4 rounded-xl text-xs tracking-widest uppercase hover:bg-[#EA580C] transition-all duration-300 shadow-md">EXPLORE PRODUCTS ↗</button>
+                        <button @click="document.getElementById('trending').scrollIntoView({ behavior: 'smooth' })" class="bg-[#0F0F10] text-white font-bold px-8 py-4 rounded-xl text-xs tracking-widest uppercase hover:bg-[#EA580C] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-xl">EXPLORE PRODUCTS ↗</button>
                     </div>
                 </div>
                 <div class="lg:col-span-5">
-                    <div @click="openHeroProduct()" class="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-[#0F0F10]/5 border border-[#0F0F10]/10 p-3 shadow-xs group cursor-pointer transition-all hover:shadow-md">
+                    <div @click="openHeroProduct()" class="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-[#0F0F10]/5 border border-[#0F0F10]/10 p-3 shadow-xs group cursor-pointer transition-all hover:shadow-2xl hover:border-[#EA580C]/30">
                         <div class="w-full h-full overflow-hidden rounded-[2rem] bg-white relative">
-                            <img src="public/moon-lamp-1.png" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-95">
+                            <img src="public/moon-lamp-1.png" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105">
                             <span class="absolute left-6 top-6 rounded-full bg-red-600/10 glowing-badge text-red-600 font-mono text-[9px] uppercase tracking-widest font-bold px-3 py-1 z-20">33% OFF</span>
                         </div>
-                        <div class="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl bg-[#FAF6F0]/95 border border-[#0F0F10]/10 px-6 py-4.5 shadow-sm">
+                        <div class="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl bg-[#FAF6F0]/95 backdrop-blur-md border border-[#0F0F10]/10 px-6 py-4.5 shadow-lg">
                             <div><span class="font-mono text-[9px] font-bold uppercase tracking-widest text-[#EAB308]">HOT DROP 🔥</span><div class="heading-elite text-sm text-[#0F0F10] mt-0.5">3D Moon Orb Lamp</div></div>
                             <div class="heading-elite text-base text-[#EA580C]">Rs 2,999</div>
                         </div>
@@ -190,7 +184,7 @@
             
             <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-2">
                 <template x-for="product in products" :key="product.id">
-                    <div class="group relative flex flex-col justify-between bg-white border border-[#0F0F10]/5 p-6 rounded-[2rem] shadow-2xs transition-all hover:shadow-md">
+                    <div class="group relative flex flex-col justify-between bg-white border border-[#0F0F10]/5 p-6 rounded-[2rem] shadow-sm transition-all duration-300 hover:shadow-2xl hover:border-[#EA580C]/20 hover:-translate-y-1">
                         
                         <div class="relative aspect-square overflow-hidden rounded-[1.8rem] bg-[#0F0F10]/5 p-3 cursor-pointer" @click="openQuickView(product)">
                             <template x-if="product.compareAt > product.price">
@@ -198,8 +192,7 @@
                             </template>
                             
                             <div class="w-full h-full overflow-hidden rounded-[1.5rem] bg-white relative">
-                                <img :src="product.currentPreview" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-95">
-                                
+                                <img :src="product.currentPreview" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105">
                                 <div class="absolute inset-0 z-10 flex">
                                     <template x-if="product.img1"><div class="h-full flex-1" @mouseenter="product.currentPreview = product.img1"></div></template>
                                     <template x-if="product.img2"><div class="h-full flex-1" @mouseenter="product.currentPreview = product.img2"></div></template>
@@ -229,7 +222,7 @@
                                         <span class="block text-xs line-through text-[#0F0F10]/30 font-mono mt-0.5" x-text="'Rs ' + product.compareAt.toLocaleString()"></span>
                                     </template>
                                 </div>
-                                <button @click="addToCart(product)" class="bg-[#EA580C] text-white font-bold px-6 py-3 rounded-xl shadow-md hover:bg-[#0F0F10] text-xs uppercase tracking-wider relative z-20">ADD TO BAG +</button>
+                                <button @click="addToCart(product)" class="bg-[#EA580C] text-white font-bold px-6 py-3 rounded-xl shadow-[0_8px_20px_-6px_rgba(234,88,12,0.5)] hover:shadow-[0_8px_20px_-6px_rgba(15,15,16,0.5)] hover:bg-[#0F0F10] text-xs uppercase tracking-wider relative z-20 transition-all duration-300 hover:-translate-y-0.5">ADD TO BAG +</button>
                             </div>
                         </div>
                     </div>
@@ -237,31 +230,23 @@
             </div>
         </section>
 
-        <div x-show="detailOpen" class="fixed inset-0 z-50 bg-[#0F0F10]/40 backdrop-blur-sm flex items-center justify-center p-4" style="display: none;" x-transition>
-            <div @click.away="detailOpen = false" class="bg-white border border-[#0F0F10]/10 rounded-[2.5rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 md:p-10 relative">
-                <button @click="detailOpen = false" class="absolute right-6 top-6 grid w-10 h-10 place-items-center rounded-full bg-[#FAF6F0] text-[#0F0F10]/60 hover:text-black font-bold z-10 border border-[#0F0F10]/5">✕</button>
+        <div x-show="detailOpen" class="fixed inset-0 z-50 bg-[#0F0F10]/40 backdrop-blur-md flex items-center justify-center p-4" style="display: none;" x-transition>
+            <div @click.away="detailOpen = false" class="bg-white border border-[#0F0F10]/10 rounded-[2.5rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 md:p-10 relative shadow-2xl">
+                <button @click="detailOpen = false" class="absolute right-6 top-6 grid w-10 h-10 place-items-center rounded-full bg-[#FAF6F0] text-[#0F0F10]/60 hover:text-black font-bold z-10 border border-[#0F0F10]/10 hover:bg-[#0F0F10] hover:text-white transition-colors duration-300">✕</button>
                 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
                     <div class="md:col-span-6 space-y-4">
-                        <div class="aspect-square bg-[#FAF6F0] rounded-2xl overflow-hidden border border-[#0F0F10]/5 p-2 relative">
+                        <div class="aspect-square bg-[#FAF6F0] rounded-2xl overflow-hidden border border-[#0F0F10]/5 p-2 relative shadow-inner">
                             <template x-if="selectedProduct.compareAt > selectedProduct.price">
                                 <span class="absolute left-6 top-6 rounded-full bg-red-600/10 glowing-badge text-red-600 font-mono text-[9px] uppercase tracking-widest font-bold px-3 py-1 z-20" x-text="Math.round((1 - selectedProduct.price / selectedProduct.compareAt) * 100) + '% OFF'"></span>
                             </template>
                             <img :src="activeDetailImg" class="w-full h-full object-cover rounded-xl transition-transform duration-700 ease-out">
                         </div>
                         <div class="flex gap-2 overflow-x-auto pb-1">
-                            <template x-if="selectedProduct.img1">
-                                <button @click="activeDetailImg = selectedProduct.img1" class="w-16 h-16 rounded-xl overflow-hidden border bg-white p-1 flex-shrink-0" :class="activeDetailImg === selectedProduct.img1 ? 'border-[#EA580C]' : 'border-[#0F0F10]/10'"><img :src="selectedProduct.img1" class="w-full h-full object-cover rounded-lg"></button>
-                            </template>
-                            <template x-if="selectedProduct.img2">
-                                <button @click="activeDetailImg = selectedProduct.img2" class="w-16 h-16 rounded-xl overflow-hidden border bg-white p-1 flex-shrink-0" :class="activeDetailImg === selectedProduct.img2 ? 'border-[#EA580C]' : 'border-[#0F0F10]/10'"><img :src="selectedProduct.img2" class="w-full h-full object-cover rounded-lg"></button>
-                            </template>
-                            <template x-if="selectedProduct.img3">
-                                <button @click="activeDetailImg = selectedProduct.img3" class="w-16 h-16 rounded-xl overflow-hidden border bg-white p-1 flex-shrink-0" :class="activeDetailImg === selectedProduct.img3 ? 'border-[#EA580C]' : 'border-[#0F0F10]/10'"><img :src="selectedProduct.img3" class="w-full h-full object-cover rounded-lg"></button>
-                            </template>
-                            <template x-if="selectedProduct.img4">
-                                <button @click="activeDetailImg = selectedProduct.img4" class="w-16 h-16 rounded-xl overflow-hidden border bg-white p-1 flex-shrink-0" :class="activeDetailImg === selectedProduct.img4 ? 'border-[#EA580C]' : 'border-[#0F0F10]/10'"><img :src="selectedProduct.img4" class="w-full h-full object-cover rounded-lg"></button>
-                            </template>
+                            <template x-if="selectedProduct.img1"><button @click="activeDetailImg = selectedProduct.img1" class="w-16 h-16 rounded-xl overflow-hidden border bg-white p-1 flex-shrink-0 transition-colors" :class="activeDetailImg === selectedProduct.img1 ? 'border-[#EA580C] ring-1 ring-[#EA580C]' : 'border-[#0F0F10]/10 hover:border-[#0F0F10]/40'"><img :src="selectedProduct.img1" class="w-full h-full object-cover rounded-lg"></button></template>
+                            <template x-if="selectedProduct.img2"><button @click="activeDetailImg = selectedProduct.img2" class="w-16 h-16 rounded-xl overflow-hidden border bg-white p-1 flex-shrink-0 transition-colors" :class="activeDetailImg === selectedProduct.img2 ? 'border-[#EA580C] ring-1 ring-[#EA580C]' : 'border-[#0F0F10]/10 hover:border-[#0F0F10]/40'"><img :src="selectedProduct.img2" class="w-full h-full object-cover rounded-lg"></button></template>
+                            <template x-if="selectedProduct.img3"><button @click="activeDetailImg = selectedProduct.img3" class="w-16 h-16 rounded-xl overflow-hidden border bg-white p-1 flex-shrink-0 transition-colors" :class="activeDetailImg === selectedProduct.img3 ? 'border-[#EA580C] ring-1 ring-[#EA580C]' : 'border-[#0F0F10]/10 hover:border-[#0F0F10]/40'"><img :src="selectedProduct.img3" class="w-full h-full object-cover rounded-lg"></button></template>
+                            <template x-if="selectedProduct.img4"><button @click="activeDetailImg = selectedProduct.img4" class="w-16 h-16 rounded-xl overflow-hidden border bg-white p-1 flex-shrink-0 transition-colors" :class="activeDetailImg === selectedProduct.img4 ? 'border-[#EA580C] ring-1 ring-[#EA580C]' : 'border-[#0F0F10]/10 hover:border-[#0F0F10]/40'"><img :src="selectedProduct.img4" class="w-full h-full object-cover rounded-lg"></button></template>
                         </div>
                     </div>
 
@@ -284,11 +269,11 @@
                                 </div>
                                 
                                 <div class="space-y-2.5 font-mono text-[10px] tracking-widest font-medium text-[#0F0F10]">
-                                    <div class="glowing-trust-box flex items-center gap-3 p-3.5 rounded-xl border border-[#0F0F10]/10 bg-[#FAF6F0]/50 backdrop-blur-md shadow-2xs hover:border-[#EA580C]/40 transition-all duration-300">
+                                    <div class="glowing-trust-box flex items-center gap-3 p-3.5 rounded-xl border border-[#0F0F10]/10 bg-[#FAF6F0]/50 backdrop-blur-md shadow-sm hover:border-[#EA580C]/40 transition-all duration-300">
                                         <span class="flex size-6 items-center justify-center rounded-lg bg-[#EA580C]/10 text-[#EA580C] text-xs font-bold">⚡</span>
                                         <span class="font-bold text-[#0F0F10]/90">FREE SHIPPING OVER RS 5,000</span>
                                     </div>
-                                    <div class="glowing-trust-box flex items-center gap-3 p-3.5 rounded-xl border border-[#0F0F10]/10 bg-[#FAF6F0]/50 backdrop-blur-md shadow-2xs hover:border-[#EA580C]/40 transition-all duration-300">
+                                    <div class="glowing-trust-box flex items-center gap-3 p-3.5 rounded-xl border border-[#0F0F10]/10 bg-[#FAF6F0]/50 backdrop-blur-md shadow-sm hover:border-[#EA580C]/40 transition-all duration-300">
                                         <span class="flex size-6 items-center justify-center rounded-lg bg-[#EA580C]/10 text-[#EA580C] text-xs font-bold">📦</span>
                                         <span class="font-bold text-[#0F0F10]/90">7-10 DAYS EASY DELIVERY</span>
                                     </div>
@@ -297,7 +282,7 @@
                         </div>
 
                         <div class="mt-8 pt-4 border-t border-[#0F0F10]/5 flex gap-3">
-                            <button @click="addToCart(selectedProduct); detailOpen = false;" class="flex-1 bg-[#EA580C] text-white font-bold py-4 rounded-xl text-xs tracking-widest uppercase hover:bg-[#0F0F10] shadow-md">ADD TO CART & CHECKOUT ↗</button>
+                            <button @click="addToCart(selectedProduct); detailOpen = false;" class="flex-1 bg-[#EA580C] text-white font-bold py-4 rounded-xl text-xs tracking-widest uppercase hover:bg-[#0F0F10] shadow-[0_8px_20px_-6px_rgba(234,88,12,0.5)] hover:shadow-[0_8px_20px_-6px_rgba(15,15,16,0.5)] transition-all duration-300 hover:-translate-y-0.5">ADD TO BAG & CHECKOUT ↗</button>
                         </div>
                     </div>
                 </div>
@@ -310,96 +295,127 @@
                 <h2 class="heading-elite text-3xl uppercase mt-2">Frequently Asked Questions</h2>
             </div>
             <div class="space-y-4">
-                <div class="border border-[#0F0F10]/10 bg-white rounded-2xl overflow-hidden">
+                <div class="border border-[#0F0F10]/10 bg-white rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-md">
                     <button @click="activeFaq = (activeFaq === 1 ? null : 1)" class="w-full flex justify-between items-center px-6 py-5 font-bold text-left text-[#0F0F10] hover:bg-[#FAF6F0]/50">
                         <span>What is the standard delivery timeline?</span>
                         <span class="text-lg transition-transform" :class="activeFaq === 1 ? 'rotate-45 text-[#EA580C]' : ''">+</span>
                     </button>
-                    <div x-show="activeFaq === 1" class="px-6 pb-5 text-sm text-[#0F0F10]/60 font-medium border-t border-[#0F0F10]/5 pt-3">
-                        We dispatch all premium design objects from our main distribution center. Shipping takes 7 to 10 days, but your order can arrive even faster!
+                    <div x-show="activeFaq === 1" x-collapse class="px-6 text-sm text-[#0F0F10]/60 font-medium border-t border-[#0F0F10]/5">
+                        <div class="py-5">We dispatch all premium design objects from our main distribution center. Shipping takes 7 to 10 days, but your order can arrive even faster!</div>
                     </div>
                 </div>
-                <div class="border border-[#0F0F10]/10 bg-white rounded-2xl overflow-hidden">
+                <div class="border border-[#0F0F10]/10 bg-white rounded-2xl overflow-hidden shadow-sm transition-all hover:shadow-md">
                     <button @click="activeFaq = (activeFaq === 2 ? null : 2)" class="w-full flex justify-between items-center px-6 py-5 font-bold text-left text-[#0F0F10] hover:bg-[#FAF6F0]/50">
                         <span>Do you support Secure Cash on Delivery (COD)?</span>
                         <span class="text-lg transition-transform" :class="activeFaq === 2 ? 'rotate-45 text-[#EA580C]' : ''">+</span>
                     </button>
-                    <div x-show="activeFaq === 2" class="px-6 pb-5 text-sm text-[#0F0F10]/60 font-medium border-t border-[#0F0F10]/5 pt-3">
-                        Yes, absolutely! Nationwide Cash on Delivery is active with an identical flat rate of Rs 399 calculated at the processing ledger.
+                    <div x-show="activeFaq === 2" x-collapse class="px-6 text-sm text-[#0F0F10]/60 font-medium border-t border-[#0F0F10]/5">
+                        <div class="py-5">Yes, absolutely! Nationwide Cash on Delivery is active with an identical flat rate of Rs 399 calculated at the processing ledger.</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="support" class="px-6 py-24 max-w-5xl mx-auto border-t border-[#0F0F10]/10">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center bg-white border border-[#0F0F10]/10 p-8 md:p-12 rounded-[2.5rem] shadow-sm">
-                <div>
-                    <p class="font-mono text-[10px] uppercase tracking-widest font-bold text-[#059669]">/ CORE LINK LINE</p>
-                    <h2 class="heading-elite text-3xl uppercase mt-2 mb-4 text-[#0F0F10]">Elite Customer Concierge</h2>
-                    <p class="text-sm text-[#0F0F10]/60 font-medium leading-relaxed mb-6">Encountering configuration hurdles? Shoot our routing network a ticket and we will handle the rest.</p>
-                    <div class="space-y-3 font-mono text-xs font-bold text-[#0F0F10]/80">
-                        <div class="flex items-center gap-2"><span>💬 WHATSAPP ENGINE:</span><span class="text-[#EA580C]">+92 300 0000000</span></div>
-                        <div class="flex items-center gap-2"><span>✉️ SYSTEM EMAIL:</span><span class="text-[#EA580C]">rimberiostore80@gmail.com</span></div>
-                    </div>
+        <div x-show="cartOpen" class="fixed inset-0 z-50 bg-[#0F0F10]/40 backdrop-blur-sm" style="display: none;" x-transition>
+            
+            <div @click.away="cartOpen = false" 
+                 x-show="cartOpen" 
+                 x-transition:enter="transform transition ease-in-out duration-500" 
+                 x-transition:enter-start="translate-x-full" 
+                 x-transition:enter-end="translate-x-0" 
+                 x-transition:leave="transform transition ease-in-out duration-500" 
+                 x-transition:leave-start="translate-x-0" 
+                 x-transition:leave-end="translate-x-full" 
+                 class="absolute right-0 top-0 h-full w-full max-w-md bg-white border-l border-[#0F0F10]/10 flex flex-col shadow-2xl">
+                
+                <div class="flex justify-between items-center p-6 border-b border-[#0F0F10]/5 shrink-0 bg-white z-10">
+                    <h3 class="heading-elite text-lg uppercase tracking-wider text-[#0F0F10]">YOUR BAG (<span x-text="cartCount"></span>)</h3>
+                    <button @click="cartOpen = false" class="text-[#0F0F10]/40 hover:text-black font-bold text-xl hover:rotate-90 transition-transform duration-300">✕</button>
                 </div>
-                <form @submit.prevent="alert('Support ticket transmitted into the core channel.')" class="space-y-4">
-                    <input type="text" placeholder="Your Full Name" required class="w-full bg-[#FAF6F0]/60 border border-[#0F0F10]/10 p-4 rounded-xl text-sm font-medium outline-none">
-                    <textarea placeholder="Describe your layout issue..." rows="3" required class="w-full bg-[#FAF6F0]/60 border border-[#0F0F10]/10 p-4 rounded-xl text-sm font-medium outline-none resize-none"></textarea>
-                    <button type="submit" class="w-full bg-[#0F0F10] text-white font-bold py-4 rounded-xl text-xs tracking-widest uppercase hover:bg-[#EA580C] transition-all duration-300">TRANSMIT SUPPORT TICKET ↗</button>
-                </form>
-            </div>
-        </section>
-
-        <div x-show="cartOpen" class="fixed inset-0 z-50 bg-[#0F0F10]/20 backdrop-blur-sm" style="display: none;" x-transition>
-            <div @click.away="cartOpen = false" class="absolute right-0 top-0 h-full w-full max-w-md bg-white border-l border-[#0F0F10]/10 p-6 flex flex-col justify-between overflow-y-auto">
-                <div>
-                    <div class="flex justify-between items-center mb-6 border-b border-[#0F0F10]/5 pb-4">
-                        <h3 class="heading-elite text-base uppercase tracking-wider text-[#0F0F10]">YOUR BAG (<span x-text="cartCount"></span>)</h3>
-                        <button @click="cartOpen = false" class="text-[#0F0F10]/40 hover:text-black font-bold">✕</button>
-                    </div>
+                
+                <div class="flex-1 overflow-y-auto p-6 scroll-smooth">
                     
-                    <div class="space-y-3 mb-6 max-h-[25vh] overflow-y-auto pr-1">
+                    <div class="space-y-3 mb-8">
                         <template x-for="item in cart" :key="item.id">
-                            <div class="flex gap-4 bg-[#FAF6F0]/50 border border-[#0F0F10]/5 p-3 rounded-xl items-center">
+                            <div class="flex gap-4 bg-[#FAF6F0]/50 border border-[#0F0F10]/5 p-3 rounded-2xl items-center shadow-sm">
+                                <img :src="item.img1" class="w-14 h-14 rounded-xl object-cover border border-[#0F0F10]/5">
                                 <div class="flex-1">
-                                    <h5 class="font-bold text-sm text-[#0F0F10]" x-text="item.name"></h5>
-                                    <span class="text-xs font-bold text-[#0F0F10]/50" x-text="'Rs ' + item.price.toLocaleString() + ' x ' + item.qty"></span>
+                                    <h5 class="font-bold text-sm text-[#0F0F10] leading-tight" x-text="item.name"></h5>
+                                    <span class="text-xs font-black text-[#EA580C] mt-1 block" x-text="'Rs ' + item.price.toLocaleString() + ' x ' + item.qty"></span>
                                 </div>
+                            </div>
+                        </template>
+                        <template x-if="cart.length === 0">
+                            <div class="text-center py-10 opacity-50">
+                                <span class="text-4xl block mb-2">🛒</span>
+                                <p class="text-xs font-bold text-[#0F0F10] uppercase tracking-wider">Your ecosystem is empty</p>
                             </div>
                         </template>
                     </div>
 
-                    <form @submit.prevent="submitOrder()" class="border-t border-[#0F0F10]/5 pt-4 space-y-3">
-                        <h4 class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#EA580C]">/ DISPATCH DISPOSITION CODES</h4>
-                        <input type="text" x-model="customerName" placeholder="Full Name" required class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3 rounded-xl text-xs font-medium outline-none text-black">
-                        <input type="email" x-model="customerEmail" placeholder="Email Address (Optional)" class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3 rounded-xl text-xs font-medium outline-none text-black">
-                        <input type="tel" x-model="customerPhone" placeholder="Phone (WhatsApp Terminal)" required class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3 rounded-xl text-xs font-medium outline-none text-black">
-                        <input type="text" x-model="customerAddress" placeholder="Complete Physical Shipping Address" required class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3 rounded-xl text-xs font-medium outline-none text-black">
+                    <form @submit.prevent="submitOrder()" class="space-y-5">
                         
-                        <div class="space-y-1">
-                            <label class="font-mono text-[9px] font-bold text-[#0F0F10]/50 uppercase tracking-wider">Payment System Matrix</label>
-                            <select x-model="paymentMethod" class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3 rounded-xl text-xs font-bold outline-none text-black">
-                                <option value="COD">Cash on Delivery (COD)</option>
-                                <option value="Credit Card">Credit Card</option>
-                                <option value="Debit Card">Debit Card</option>
-                            </select>
+                        <div>
+                            <h4 class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#EA580C] pb-2 border-b border-[#0F0F10]/5 mb-3">/ DISPATCH DISPOSITION CODES</h4>
+                            <div class="space-y-3">
+                                <input type="text" x-model="customerName" placeholder="Full Name" required class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black focus:border-[#EA580C] focus:bg-white focus:shadow-[0_0_15px_rgba(234,88,12,0.1)] transition-all">
+                                <input type="tel" x-model="customerPhone" placeholder="Phone (WhatsApp Terminal)" required class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black focus:border-[#EA580C] focus:bg-white focus:shadow-[0_0_15px_rgba(234,88,12,0.1)] transition-all">
+                                <input type="text" x-model="customerAddress" placeholder="Complete Physical Shipping Address" required class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black focus:border-[#EA580C] focus:bg-white focus:shadow-[0_0_15px_rgba(234,88,12,0.1)] transition-all">
+                            </div>
                         </div>
+                        
+                        <div>
+                            <label class="font-mono text-[9px] font-bold text-[#0F0F10]/50 uppercase tracking-wider block mb-2">Payment System Matrix</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div @click="paymentMethod = 'COD'" 
+                                     class="cursor-pointer border p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all duration-300"
+                                     :class="paymentMethod === 'COD' ? 'border-[#EA580C] bg-[#EA580C]/5 ring-1 ring-[#EA580C] shadow-[0_0_15px_rgba(234,88,12,0.1)] scale-[1.02]' : 'border-[#0F0F10]/10 bg-[#FAF6F0] hover:bg-white hover:shadow-md'">
+                                    <span class="text-2xl drop-shadow-sm">💵</span>
+                                    <span class="text-[10px] font-black text-[#0F0F10] uppercase tracking-wider text-center">Cash on Delivery</span>
+                                </div>
 
-                        <div class="bg-[#FAF6F0] border border-[#0F0F10]/5 rounded-xl p-4 mt-4 space-y-2 text-xs font-medium">
-                            <div class="flex justify-between text-[#0F0F10]/60"><span>Subtotal:</span><span class="font-bold text-[#0F0F10]" x-text="'Rs ' + cartSubtotal.toLocaleString()"></span></div>
-                            <div class="flex justify-between text-[#0F0F10]/60"><span>Delivery Charges:</span><span class="font-bold text-[#0F0F10]" x-text="'Rs ' + deliveryCharges"></span></div>
-                            <div class="flex justify-between items-center border-t border-[#0F0F10]/10 pt-2 text-[#0F0F10]">
-                                <span class="font-bold uppercase tracking-wider text-[10px]">Total Bill Amount:</span>
-                                <span class="heading-elite text-base text-[#EA580C]" x-text="'Rs ' + cartTotal.toLocaleString()"></span>
+                                <div @click="paymentMethod = 'CARD'" 
+                                     class="cursor-pointer border p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all duration-300"
+                                     :class="paymentMethod === 'CARD' ? 'border-[#0F0F10] bg-[#0F0F10] ring-1 ring-[#0F0F10] shadow-[0_0_15px_rgba(15,15,16,0.2)] scale-[1.02]' : 'border-[#0F0F10]/10 bg-[#FAF6F0] hover:bg-white hover:shadow-md'">
+                                    <span class="text-2xl drop-shadow-sm">💳</span>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-center transition-colors" :class="paymentMethod === 'CARD' ? 'text-white' : 'text-[#0F0F10]'">Credit / Debit</span>
+                                </div>
                             </div>
                         </div>
 
-                        <button type="submit" :disabled="orderLoading" class="w-full bg-[#0F0F10] text-white font-bold py-3.5 rounded-xl text-xs tracking-widest uppercase hover:bg-[#EA580C] mt-2 transition-colors duration-300 flex justify-center items-center gap-2">
-                            <span x-show="orderLoading">LOADING... ⏳</span>
-                            <span x-show="!orderLoading">PLACE ORDER 🚀</span>
-                        </button>
+                        <div x-show="paymentMethod === 'CARD'" x-collapse class="pt-2">
+                            <div class="p-5 rounded-2xl border border-[#0F0F10]/10 bg-white space-y-4 shadow-xl relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0F0F10] to-[#EA580C]"></div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <p class="font-mono text-[9px] font-black text-[#EA580C] uppercase tracking-wider">Secure Payment Gateway</p>
+                                    <span class="text-[10px]">🔒 256-bit</span>
+                                </div>
+                                <input type="text" placeholder="Card Number (0000 0000 0000 0000)" class="w-full bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black text-center tracking-[0.2em] focus:border-[#0F0F10] focus:ring-1 focus:ring-[#0F0F10] transition-all">
+                                <div class="flex gap-3">
+                                    <input type="text" placeholder="MM/YY" class="w-1/2 bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black text-center tracking-widest focus:border-[#0F0F10] focus:ring-1 focus:ring-[#0F0F10] transition-all">
+                                    <input type="text" placeholder="CVV" class="w-1/2 bg-[#FAF6F0] border border-[#0F0F10]/10 p-3.5 rounded-xl text-xs font-bold outline-none text-black text-center tracking-widest focus:border-[#0F0F10] focus:ring-1 focus:ring-[#0F0F10] transition-all">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#FAF6F0] border border-[#0F0F10]/10 rounded-2xl p-5 mt-2 space-y-2.5 text-xs font-medium shadow-sm">
+                            <div class="flex justify-between text-[#0F0F10]/60"><span>Subtotal:</span><span class="font-bold text-[#0F0F10]" x-text="'Rs ' + cartSubtotal.toLocaleString()"></span></div>
+                            <div class="flex justify-between text-[#0F0F10]/60"><span>Delivery Charges:</span><span class="font-bold text-[#0F0F10]" x-text="'Rs ' + deliveryCharges"></span></div>
+                            <div class="flex justify-between items-center border-t border-[#0F0F10]/10 pt-3 mt-1 text-[#0F0F10]">
+                                <span class="font-bold uppercase tracking-wider text-[10px]">Total Bill Amount:</span>
+                                <span class="heading-elite text-lg text-[#EA580C]" x-text="'Rs ' + cartTotal.toLocaleString()"></span>
+                            </div>
+                        </div>
                     </form>
                 </div>
+                
+                <div class="p-6 border-t border-[#0F0F10]/5 bg-white shrink-0 z-10 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.05)]">
+                    <button @click="submitOrder()" :disabled="orderLoading" class="w-full bg-[#0F0F10] text-white font-bold py-4.5 rounded-2xl text-xs tracking-widest uppercase hover:bg-[#EA580C] transition-all duration-300 flex justify-center items-center gap-2 shadow-[0_8px_20px_-6px_rgba(15,15,16,0.6)] hover:shadow-[0_8px_20px_-6px_rgba(234,88,12,0.6)] hover:-translate-y-0.5">
+                        <span x-show="orderLoading">TRANSMITTING... ⏳</span>
+                        <span x-show="!orderLoading">PLACE ORDER VIA RAILWAY 🚀</span>
+                    </button>
+                </div>
+
             </div>
         </div>
 
